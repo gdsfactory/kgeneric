@@ -1,6 +1,6 @@
 
 ```{eval-rst}
-.. automodule:: KGeneric
+.. automodule:: kgeneric
     :members:
 
 ```

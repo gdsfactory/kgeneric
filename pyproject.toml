@@ -5,7 +5,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name="kgeneric"
-description="KLayout extras for KCells, PDK and generic_tech"
+description="KLayout generic PDK"
 classifiers = [
 	"Programming Language :: Python :: 3.10",
 	"Programming Language :: Python :: 3.11",

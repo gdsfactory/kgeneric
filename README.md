@@ -1,8 +1,6 @@
 # KGeneric 0.0.1
 
-KLayout extras for KCells, PDK and generic_tech
-
-## Usage
+KLayout generic PDK for Kfactory
 
 ## Installation
 

@@ -92,8 +92,9 @@ def bend_s(
 
 if __name__ == "__main__":
     from kgeneric.pdk import LAYER
+    from kgeneric import pdk
 
-    um = 1e3
+    um = 1 / pdk.kcl.dbu
     enclosure = Enclosure(
         [
             (LAYER.DEEPTRENCH, 2 * um, 3 * um),
@@ -103,6 +104,6 @@ if __name__ == "__main__":
         main_layer=LAYER.WG,
     )
 
-    c = bend_s(width=1, height=2, length=20, layer=LAYER.WG, enclosure=enclosure)
+    c = bend_s(width=0.25, height=2, length=1, layer=LAYER.WG, enclosure=enclosure)
     c.draw_ports()
     c.show()

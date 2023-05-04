@@ -124,7 +124,9 @@ def straight_coupler(
 
 
 if __name__ == "__main__":
-    um = 1e3
+    from kgeneric import pdk
+
+    um = 1 / pdk.kcl.dbu
     enclosure = Enclosure(
     [
         (LAYER.DEEPTRENCH, 2*um, 3*um),

@@ -223,6 +223,18 @@ def mzi(
 
 
 if __name__ == "__main__":
-    c = mzi(length_x=1, with_splitter=False)
+    from kgeneric.pdk import LAYER
+    from kgeneric import pdk
+
+    um = 1 / pdk.kcl.dbu
+    enclosure = Enclosure(
+        [
+            (LAYER.DEEPTRENCH, 2 * um, 3 * um),
+            (LAYER.SLAB90, 2 * um),
+        ],
+        name="WGSLAB",
+        main_layer=LAYER.WG,
+    )
+    c = mzi(length_x=1, with_splitter=True, enclosure=enclosure)
     c.draw_ports()
     c.show()

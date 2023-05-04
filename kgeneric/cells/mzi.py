@@ -61,6 +61,7 @@ def mzi(
         radius: bend radius.
         enclosure: waveguide enclosure.
         kwargs: combiner/splitter kwargs.
+
     .. code::
                        b2______b3
                       |  sxtop  |
@@ -76,6 +77,7 @@ def mzi(
                       |         |
                      b6__sxbot__b7
                           Lx
+
     """
     combiner = combiner or splitter
 
@@ -109,14 +111,15 @@ def mzi(
     }
     kwargs.pop("kwargs", "")
     kwargs |= combiner_settings
-    cp1_ = kf.kcl.pdk.get_cell(splitter, **kwargs)
-    cp1_copy = cp1_
-    kf.kcl.pdk.get_cell(combiner, **kwargs) if combiner else cp1_
+    _cp1 = kf.kcl.pdk.get_cell(splitter, **kwargs)
+    kf.kcl.pdk.get_cell(combiner, **kwargs) if combiner else _cp1
 
     if with_splitter:
-        cp1 = c << cp1_
+        cp1 = c << _cp1
+    else:
+        cp1 = _cp1
 
-    cp2 = c << cp1_copy
+    cp2 = c << _cp1
     b5 = c << bend
     # b5.transform(kf.kdb.Trans.M90)
     b5.align("W0", cp2.ports[port_e0_splitter])
@@ -189,25 +192,10 @@ def mzi(
     # cp2.transform(port_e0_combiner, cp1.ports[port_e0_splitter])
 
     bend_width = abs(bend.ports[0].x - bend.ports[1].x)
-
     cp2.align(port_e0_combiner, cp1.ports[port_e0_splitter])
     cp2.transform(
         kf.kdb.Trans(sxt.ports["o2"].x - cp2.ports["o1"].x + 2 * bend_width, 0)
     )
-
-    # cp2.transform(kf.kdb.Trans.M90)
-    # cp2.transform(
-    #     kf.kdb.Trans(
-    #         2
-    #         * int(
-    #             sxt.ports["o2"].x
-    #             + radius * nbends
-    #             + cp2.bbox().width()
-    #             + cp2.ports["o2"].x
-    #         ),
-    #         0,
-    #     )
-    # )
 
     connect(
         c,
@@ -235,5 +223,6 @@ def mzi(
 
 
 if __name__ == "__main__":
-    c = mzi(length_x=1, with_splitter=True)
+    c = mzi(length_x=1, with_splitter=False)
+    c.draw_ports()
     c.show()

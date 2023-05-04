@@ -1,13 +1,12 @@
-from enum import IntEnum
-from typing import Callable, Literal, Optional
+from typing import Literal, Optional
 
 import numpy as np
 
 import kfactory as kf
-from KGeneric.generic_tech import LAYER
+from kgeneric.pdk import LAYER
 
 
-@kf.autocell
+@kf.cell
 def grating_coupler_elliptical(
     polarization: Literal["te"] | Literal["tm"] = "te",
     taper_length: int = 16600,
@@ -65,7 +64,7 @@ def grating_coupler_elliptical(
             taper_angle + trenches_extra_angle,
         )
         c.shapes(layer_trench).insert(tooth)
-    tooth_region = kf.kdb.Region(c.shapes(layer_trench))
+    kf.kdb.Region(c.shapes(layer_trench))
 
     # Make the taper
     if taper_extent_n_periods == "last":
@@ -126,7 +125,7 @@ def grating_coupler_elliptical(
     # setattr(c.ports["FL"], "polarization", polarization)
 
     y0 = 0
-    setattr(c, "p0_overclad", (x0, y0))
+    c.p0_overclad = x0, y0
 
     return c
 
@@ -208,3 +207,8 @@ def ellipse_arc(
     xs = a * np.cos(theta) + x0
     ys = b * np.sin(theta)
     return [kf.kdb.Point(x, y) for x, y in zip(xs, ys)]  # np.column_stack([xs, ys])
+
+
+if __name__ == "__main__":
+    c = grating_coupler_elliptical()
+    c.show()

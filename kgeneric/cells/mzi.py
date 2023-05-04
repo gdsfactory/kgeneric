@@ -1,38 +1,31 @@
 from functools import partial
-from typing import Any, Callable, Optional, Sequence, Tuple, Union
+from typing import Any, Callable, Optional
 
 import kfactory as kf
-from kfactory import autocell
+from kfactory import cell
 from kfactory.kcell import LayerEnum
-from KGeneric.pcells.dbu.waveguide import waveguide as waveguide_dbu
-
-### To do:
-from KGeneric.pcells.DCs import coupler
-from KGeneric.pcells.euler import bend_euler
-from KGeneric.pcells.taper import taper
-from KGeneric.pcells.waveguide import waveguide as straight_function
 from kfactory.routing.optical import connect
-from kfactory.typs import ComponentSpec
-from kfactory.utils import Enclosure
+from kfactory.typings import CellSpec
+from kfactory.utils.enclosure import Enclosure
 
-# from KGeneric.pcells.heater import wg_heater_connected
-# from KGeneric.tech.layers import LAYER (create some default layer for users)
-# from KGeneric.utils.enclosures import LAYER_ENC, WG_STANDARD
-# from KGeneric.utils.connection import connect_sequence
+from kgeneric.cells.dbu.waveguide import waveguide as waveguide_dbu
+from kgeneric.cells.DCs import coupler
+from kgeneric.cells.euler import bend_euler
+from kgeneric.cells.waveguide import waveguide as straight_function
 
 
-@autocell
+@cell
 def mzi(
     delta_length: float = 10.0,
     length_y: float = 2.0,
     length_x: Optional[float] = 0.1,
     bend_component: Callable[..., kf.KCell] = bend_euler,
-    straight: ComponentSpec = straight_function,
-    straight_y: Optional[ComponentSpec] = None,
-    straight_x_top: Optional[ComponentSpec] = None,
-    straight_x_bot: Optional[ComponentSpec] = None,
-    splitter: ComponentSpec = coupler,
-    combiner: Optional[ComponentSpec] = None,
+    straight: CellSpec = straight_function,
+    straight_y: Optional[CellSpec] = None,
+    straight_x_top: Optional[CellSpec] = None,
+    straight_x_bot: Optional[CellSpec] = None,
+    splitter: CellSpec = coupler,
+    combiner: Optional[CellSpec] = None,
     with_splitter: bool = True,
     port_e1_splitter: str = "o3",
     port_e0_splitter: str = "o4",
@@ -106,7 +99,7 @@ def mzi(
         "radius": radius,
         "enclosure": enclosure,
     }
-    bend = kf.get_component(bend_component, **bend_settings)
+    bend = kf.kcl.pdk.get_cell(bend_component, **bend_settings)
     c = kf.KCell()
     straight_connect = partial(waveguide_dbu, layer=layer, enclosure=enclosure)
     combiner_settings = {
@@ -116,9 +109,9 @@ def mzi(
     }
     kwargs.pop("kwargs", "")
     kwargs.update(combiner_settings)
-    cp1_ = kf.get_component(splitter, **kwargs)
+    cp1_ = kf.kcl.pdk.get_cell(splitter, **kwargs)
     cp1_copy = cp1_
-    cp2_ = kf.get_component(combiner, **kwargs) if combiner else cp1_
+    kf.kcl.pdk.get_cell(combiner, **kwargs) if combiner else cp1_
 
     if with_splitter:
         cp1 = c << cp1_
@@ -130,7 +123,7 @@ def mzi(
     # b5.instance.transform(kf.kdb.Trans(1, False, 0, 0))
     # b5.transform(kf.kdb.Trans.M90.R180)
 
-    syl = c << kf.get_component(
+    syl = c << kf.kcl.pdk.get_cell(
         straight_y,
         length=delta_length / 2 + length_y,
         width=width,
@@ -143,7 +136,7 @@ def mzi(
     # b6.transform(kf.kdb.Trans.M90.R270)
 
     straight_x_bot = (
-        kf.get_component(
+        kf.kcl.pdk.get_cell(
             straight_x_bot,
             width=width,
             length=length_x,
@@ -151,7 +144,7 @@ def mzi(
             enclosure=enclosure,
         )
         if length_x
-        else kf.get_component(
+        else kf.kcl.pdk.get_cell(
             straight_x_bot, length=10.0, width=width, layer=layer, enclosure=enclosure
         )
     )
@@ -162,7 +155,7 @@ def mzi(
     b1 = c << bend
     b1.connect("W0", cp1.ports[port_e1_splitter])
 
-    sytl = c << kf.get_component(
+    sytl = c << kf.kcl.pdk.get_cell(
         straight_y, length=length_y, width=width, layer=layer, enclosure=enclosure
     )
     sytl.connect("o1", b1.ports["N0"])
@@ -170,7 +163,7 @@ def mzi(
     b2 = c << bend
     b2.connect("N0", sytl.ports["o2"])
     straight_x_top = (
-        kf.get_component(
+        kf.kcl.pdk.get_cell(
             straight_x_top,
             length=length_x,
             width=width,
@@ -178,7 +171,7 @@ def mzi(
             enclosure=enclosure,
         )
         if length_x
-        else kf.get_component(
+        else kf.kcl.pdk.get_cell(
             straight_x_top, length=10.0, width=width, layer=layer, enclosure=enclosure
         )
     )
@@ -221,5 +214,9 @@ def mzi(
         c.add_port(name="o2", port=b5.ports["W0"])
     c.add_ports([port for port in cp2.ports if port.orientation == 0])
     c.autorename_ports()
-
     return c
+
+
+if __name__ == "__main__":
+    c = mzi()
+    c.show()

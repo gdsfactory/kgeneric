@@ -1,8 +1,8 @@
 import kfactory as kf
-from KGeneric.pcells.grating_coupler_elliptical import grating_coupler_elliptical
+from kgeneric.cells.grating_coupler_elliptical import grating_coupler_elliptical
 
 
-@kf.autocell
+@kf.cell
 def GC_TE() -> kf.KCell:
     """
     TE grating coupler
@@ -24,7 +24,7 @@ def GC_TE() -> kf.KCell:
     )
 
 
-@kf.autocell
+@kf.cell
 def GC_TM() -> kf.KCell:
     """
     TM grating coupler
@@ -49,5 +49,4 @@ def GC_TM() -> kf.KCell:
 
 if __name__ == "__main__":
     c = GC_TE()
-
-    kf.show(c)
+    c.show()

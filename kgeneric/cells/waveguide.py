@@ -16,9 +16,9 @@ The slabs and excludes can be given in the form of an :py:class:~`Enclosure`.
 """
 
 
-from kfactory import KCell, LayerEnum, klib
+from kfactory import KCell, LayerEnum, kcl
 from kfactory.utils import Enclosure
-from KGeneric.pcells.dbu.waveguide import waveguide as waveguide_dbu
+from kgeneric.cells.dbu.waveguide import waveguide as waveguide_dbu
 
 __all__ = ["waveguide", "waveguide_dbu"]
 
@@ -50,5 +50,12 @@ def waveguide(
         enclosure: Definition of slabs/excludes. [um]
     """
     return waveguide_dbu(
-        int(width / klib.dbu), int(length / klib.dbu), layer, enclosure=enclosure
+        int(width / kcl.dbu), int(length / kcl.dbu), layer, enclosure=enclosure
     )
+
+
+if __name__ == "__main__":
+    from kgeneric.pdk import LAYER
+
+    c = waveguide(width=1, length=10, layer=LAYER.WG)
+    c.show()

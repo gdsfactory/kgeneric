@@ -6,9 +6,9 @@ import numpy as np
 import numpy.typing as nty
 from scipy.special import binom  # type: ignore[import]
 
-from kfactory import KCell, LayerEnum, autocell, kdb
-from kfactory.pdk import _ACTIVE_PDK
-from kfactory.utils import Enclosure
+from kfactory import KCell, LayerEnum, cell, kdb
+from kfactory.utils.enclosure import Enclosure
+from kfactory.utils.enclosure import extrude_path
 
 __all__ = ["bend_s"]
 
@@ -29,7 +29,7 @@ def bezier_curve(
     return [kdb.DPoint(float(x), float(y)) for x, y in zip(xs, ys)]
 
 
-@autocell
+@cell
 def bend_s(
     width: float,
     height: float,
@@ -64,23 +64,23 @@ def bend_s(
         t=np.linspace(t_start, t_stop, nb_points),
     )
 
-    if enclosure is None:
-        enclosure = Enclosure()
+    extrude_path(c, path=pts, layer=layer, width=width, start_angle=0, end_angle=0)
+    if enclosure:
+        enclosure.extrude_path(c, pts, layer, width, start_angle=0, end_angle=0)
 
-    enclosure.extrude_path(c, path=pts, main_layer=layer, width=width)
-
+    bbox_layer = c.bbox_per_layer(layer)
     c.create_port(
         name="W0",
-        width=int(width / c.klib.dbu),
+        width=int(width / c.kcl.dbu),
         trans=kdb.Trans(2, True, 0, 0),
         layer=layer,
         port_type="optical",
     )
     c.create_port(
         name="E0",
-        width=int(width / c.klib.dbu),
+        width=int(width / c.kcl.dbu),
         trans=kdb.Trans(
-            0, False, c.bbox().right, c.bbox().top - int(width / c.klib.dbu) // 2
+            0, False, bbox_layer.right, bbox_layer.top - int(width / c.kcl.dbu) // 2
         ),
         layer=layer,
         port_type="optical",
@@ -88,3 +88,21 @@ def bend_s(
 
     c.info["sim"] = "FDTD"
     return c
+
+
+if __name__ == "__main__":
+    from kgeneric.pdk import LAYER
+
+    um = 1e3
+    enclosure = Enclosure(
+        [
+            (LAYER.DEEPTRENCH, 2 * um, 3 * um),
+            (LAYER.SLAB90, 2 * um),
+        ],
+        name="WGSLAB",
+        main_layer=LAYER.WG,
+    )
+
+    c = bend_s(width=1, height=2, length=20, layer=LAYER.WG, enclosure=enclosure)
+    c.draw_ports()
+    c.show()

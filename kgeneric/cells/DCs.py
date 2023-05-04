@@ -1,15 +1,17 @@
 from typing import Union
 
-from kfactory import KCell, autocell, kdb
-from kfactory.generic_tech import LAYER
+from kfactory import KCell, cell, kdb
+
 from kfactory.kcell import LayerEnum
-from KGeneric.pcells.bezier import bend_s
-from KGeneric.pcells.waveguide import waveguide
-from kfactory.pdk import _ACTIVE_PDK
-from kfactory.utils import Enclosure
+
+from kfactory.utils.enclosure import Enclosure
+
+from kgeneric.pdk import LAYER
+from kgeneric.cells.bezier import bend_s
+from kgeneric.cells.waveguide import waveguide
 
 
-@autocell
+@cell
 def coupler(
     gap: float = 0.2,
     length: float = 10.0,
@@ -57,8 +59,8 @@ def coupler(
 
     wg = c << straight_coupler(gap, length, width, layer, enclosure)
 
-    sbend.connect("E0", wg.ports["o1"])
-    sbend_2.connect("E0", wg.ports["o4"])
+    sbend.align("E0", wg.ports["o1"])
+    sbend_2.align("E0", wg.ports["o4"])
     sbend_r_top = c << bend_s(
         width=width,
         height=(dy / 2 - width / 2 - gap / 2),
@@ -74,8 +76,8 @@ def coupler(
         enclosure=enclosure,
     )
 
-    sbend_r_top.connect("W0", wg.ports["o3"])
-    sbend_r_bottom.connect("W0", wg.ports["o2"])
+    sbend_r_top.align("W0", wg.ports["o3"])
+    sbend_r_bottom.align("W0", wg.ports["o2"])
 
     # sbend_r_top.transform(kdb.DTrans(0, False, 0, 0))
     # sbend_r_bottom.transform(kdb.DTrans(0, False, 0, 0))
@@ -85,11 +87,10 @@ def coupler(
     c.add_port(name="o3", port=sbend_r_bottom.ports["E0"])
     c.add_port(name="o4", port=sbend_r_top.ports["E0"])
     c.begin_instances_rec()
-
     return c
 
 
-@autocell
+@cell
 def straight_coupler(
     gap: float = 0.2,
     length: float = 10.0,
@@ -108,10 +109,10 @@ def straight_coupler(
     c = KCell()
 
     wg_top = c << waveguide(width, length, layer, enclosure)
-    wg_top.trans = kdb.Trans(0, True, 0, int((gap + width) / 2 / c.klib.dbu))
+    wg_top.trans = kdb.Trans(0, True, 0, int((gap + width) / 2 / c.kcl.dbu))
 
     wg_bottom = c << waveguide(width, length, layer, enclosure)
-    wg_bottom.trans = kdb.Trans(0, False, 0, -int((gap + width) / 2 / c.klib.dbu))
+    wg_bottom.trans = kdb.Trans(0, False, 0, -int((gap + width) / 2 / c.kcl.dbu))
 
     c.add_port(name="o1", port=wg_top.ports["o1"])
     c.add_port(name="o2", port=wg_top.ports["o2"])
@@ -120,3 +121,18 @@ def straight_coupler(
 
     c.info["sim"] = "MODE"
     return c
+
+
+if __name__ == "__main__":
+    um = 1e3
+    enclosure = Enclosure(
+    [
+        (LAYER.DEEPTRENCH, 2*um, 3*um),
+        (LAYER.SLAB90, 2*um),
+    ],
+    name="WGSLAB",
+    main_layer=LAYER.WG,
+)
+
+    c = coupler(enclosure=enclosure)
+    c.show()

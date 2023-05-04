@@ -6,14 +6,14 @@ A circular bend has a constant radius.
 import numpy as np
 
 from kfactory import kdb
-from kfactory.kcell import KCell, LayerEnum, autocell
-from kfactory.utils import Enclosure
-from kfactory.utils.geo import extrude_path
+from kfactory.kcell import KCell, LayerEnum, cell
+from kfactory.utils.enclosure import Enclosure
+from kfactory.utils.enclosure import extrude_path
 
 __all__ = ["bend_circular"]
 
 
-@autocell
+@cell
 def bend_circular(
     width: float,
     radius: float,
@@ -58,7 +58,7 @@ def bend_circular(
     c.create_port(
         name="o1",
         trans=kdb.Trans(2, False, 0, 0),
-        width=int(width / c.klib.dbu),
+        width=int(width / c.kcl.dbu),
         layer=layer,
     )
 
@@ -66,16 +66,24 @@ def bend_circular(
         case 90:
             c.create_port(
                 name="o2",
-                trans=kdb.DTrans(1, False, radius, radius).to_itype(c.klib.dbu),
-                width=int(width / c.klib.dbu),
+                trans=kdb.DTrans(1, False, radius, radius).to_itype(c.kcl.dbu),
+                width=int(width / c.kcl.dbu),
                 layer=layer,
             )
         case 180:
             c.create_port(
                 name="o2",
-                trans=kdb.DTrans(0, False, 0, 2 * radius).to_itype(c.klib.dbu),
-                width=int(width / c.klib.dbu),
+                trans=kdb.DTrans(0, False, 0, 2 * radius).to_itype(c.kcl.dbu),
+                width=int(width / c.kcl.dbu),
                 layer=layer,
             )
 
     return c
+
+
+if __name__ == "__main__":
+    from kgeneric.pdk import LAYER
+
+    c = bend_circular(width=1, radius=5, layer=LAYER.WG)
+    c.draw_ports()
+    c.show()

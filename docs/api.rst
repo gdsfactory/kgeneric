@@ -1,17 +1,12 @@
-KGeneric
+kgeneric
 ===================================
 
 Config
 ---------------------
 
-.. automodule:: KGeneric.config
+.. automodule:: kgeneric.config
 
-Config
+pdk
 ---------------------
 
-.. rubric:: config
-
-.. autosummary::
-   :toctree: _autosummary/
-
-    KGeneric.config
+.. automodule:: kgeneric.pdk

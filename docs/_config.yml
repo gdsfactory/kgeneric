@@ -2,7 +2,7 @@
 # Learn more at https://jupyterbook.org/customize/config.html
 
 title: kgeneric
-author: Skandan Chandrasekar
+author: kfactory
 
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html
@@ -26,11 +26,11 @@ html:
   use_edit_page_button: true
   use_repository_button: true
   use_issues_button: true
-  baseurl: https://github.com/gdsfactory/KGeneric
+  baseurl: https://github.com/gdsfactory/kgeneric
 
 # Information about where the book exists on the web
 repository:
-  url: https://github.com/gdsfactory/KGeneric
+  url: https://github.com/gdsfactory/kgeneric
   path_to_book: docs # Optional path to your book, relative to the repository root
   branch: main # Which branch of the repository should be used when creating links (optional)
 
@@ -45,8 +45,6 @@ sphinx:
     - "sphinx.ext.autosummary"
     - "sphinx.ext.napoleon"
     - "sphinx.ext.viewcode"
-    - "matplotlib.sphinxext.plot_directive"
-    - "sphinx_click"
     - "sphinxcontrib.autodoc_pydantic"
   config:
     #autodoc_typehints: description

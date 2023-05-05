@@ -1,7 +1,7 @@
 # Book settings
 # Learn more at https://jupyterbook.org/customize/config.html
 
-title: KGeneric
+title: kgeneric
 author: Skandan Chandrasekar
 
 # Force re-execution of notebooks on each build.

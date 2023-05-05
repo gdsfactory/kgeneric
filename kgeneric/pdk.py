@@ -361,6 +361,7 @@ def get_layer_stack(
     return GenericLayerStack()
 
 
+LAYER_STACK = get_layer_stack()
 
 if __name__ == "__main__":
     print(LAYER.WG)

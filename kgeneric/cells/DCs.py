@@ -128,13 +128,13 @@ if __name__ == "__main__":
 
     um = 1 / pdk.kcl.dbu
     enclosure = Enclosure(
-    [
-        (LAYER.DEEPTRENCH, 2*um, 3*um),
-        (LAYER.SLAB90, 2*um),
-    ],
-    name="WGSLAB",
-    main_layer=LAYER.WG,
-)
+        [
+            (LAYER.DEEPTRENCH, 2 * um, 3 * um),
+            (LAYER.SLAB90, 2 * um),
+        ],
+        name="WGSLAB",
+        main_layer=LAYER.WG,
+    )
 
     c = coupler(enclosure=enclosure)
     c.show()

@@ -284,5 +284,7 @@ def bend_s_euler(
 
 
 if __name__ == "__main__":
-    c = bend_euler()
+    from kgeneric.pdk import LAYER
+
+    c = bend_euler(width=1, radius=10, layer=LAYER.WG)
     c.show()

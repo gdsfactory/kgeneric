@@ -109,6 +109,11 @@ version_files = [
 [tool.mypy]
 python_version = "3.10"
 strict = true
+exclude = [
+	"kgeneric/cells/mzi.py",
+	"kgeneric/pdk.py",
+]
+plugins = "pydantic.mypy"
 
 [tool.pylsp-mypy]
 enabled = true

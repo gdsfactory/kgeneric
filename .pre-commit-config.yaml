@@ -71,13 +71,14 @@ repos:
         args: [--exit-zero]
         # ignore all tests, not just tests data
         exclude: ^tests/
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.0.1"
+  - repo: local
     hooks:
       - id: mypy
-        exclude: ^(docs/|example-plugin/|tests/fixtures)
-        additional_dependencies:
-          - "pydantic"
+        name: mypy
+        language: python
+        entry: bash -c 'mypy --strict -p kgeneric'
+        verbose: true
+        always_run: true
   # - repo: https://github.com/terrencepreilly/darglint
   #   rev: master
   #   hooks:

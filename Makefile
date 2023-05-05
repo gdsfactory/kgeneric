@@ -1,26 +1,24 @@
-
-install: 
+install:
 	pip install -e .[dev]
 	pre-commit install
 
 dev:
 	pip install -e .[dev,docs]
 
-
 test:
 	pytest -s
 
 cov:
-	pytest --cov=KGeneric
+	pytest --cov=kgeneric
 
 mypy:
 	mypy . --ignore-missing-imports
 
 pylint:
-	pylint KGeneric
+	pylint kgeneric
 
 ruff:
-	ruff --fix KGeneric/*.py
+	ruff --fix kgeneric/*.py
 
 git-rm-merged:
 	git branch -D `git branch --merged | grep -v \* | xargs`
@@ -49,9 +47,7 @@ jupytext:
 notebooks:
 	jupytext docs/**/*.py --to ipynb
 
-
 docs:
 	jb build docs
 
 .PHONY: drc doc docs
-

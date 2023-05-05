@@ -4,5 +4,6 @@
 format: jb-book
 root: index
 chapters:
+  - file: cells
   - file: api
   - file: changelog

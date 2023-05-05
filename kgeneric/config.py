@@ -8,7 +8,7 @@ home = pathlib.Path.home()
 cwd = pathlib.Path.cwd()
 cwd_config = cwd / "config.yml"
 
-home_config = home / ".config" / "KGeneric.yml"
+home_config = home / ".config" / "kgeneric.yml"
 config_dir = home / ".config"
 config_dir.mkdir(exist_ok=True)
 module_path = pathlib.Path(__file__).parent.absolute()

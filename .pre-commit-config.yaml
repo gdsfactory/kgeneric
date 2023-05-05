@@ -1,6 +1,6 @@
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: "9260cbc9c84c06022993bfbcc42fdbf0305c5b8e"
+    rev: "0122e76bfe37d895fa9085712e65dbfef2e349b1"
     hooks:
       - id: check-added-large-files
       - id: check-case-conflict
@@ -27,7 +27,7 @@ repos:
   #       args: ["--profile", "black", "--filter-files"]
 
   - repo: https://github.com/psf/black
-    rev: "d9b8a6407e2f46304a8d36b18e4a73d8e0613519"
+    rev: "eb32729ab562c010d9f644a3bbb2305196b2deb7"
     hooks:
       - id: black
 
@@ -43,7 +43,7 @@ repos:
   #       files: ".ipynb"
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: ddb39ad37166dbc938d853cc77606526a0b1622a
+    rev: v3.3.2
     hooks:
       - id: pyupgrade
         args: [--py37-plus, --keep-runtime-typing]
@@ -55,7 +55,7 @@ repos:
   #       args: ["-L TE,TE/TM,te,ba,FPR,fpr_spacing,ro,donot"]
 
   - repo: https://github.com/shellcheck-py/shellcheck-py
-    rev: 953faa6870f6663ac0121ab4a800f1ce76bca31f
+    rev: ee7a347451760f817260ca3cafae4e3bec06bc84
     hooks:
       - id: shellcheck
 
@@ -65,20 +65,19 @@ repos:
   #     - id: python-use-type-annotations
 
   - repo: https://github.com/PyCQA/bandit
-    rev: fe1361fdcc274850d4099885a802f2c9f28aca08
+    rev: 45619e0c8325fad08f0cbd74034e5161a16b1b4f
     hooks:
       - id: bandit
         args: [--exit-zero]
         # ignore all tests, not just tests data
         exclude: ^tests/
-  - repo: local
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: "961f38dddd22ebfc8338e1244352afdc71ee6771"
     hooks:
       - id: mypy
-        name: mypy
-        language: python
-        entry: bash -c 'mypy --strict -p kgeneric'
-        verbose: true
-        always_run: true
+        exclude: ^(docs/|example-plugin/|tests/fixtures)
+        additional_dependencies:
+          - "pydantic"
   # - repo: https://github.com/terrencepreilly/darglint
   #   rev: master
   #   hooks:
@@ -137,6 +136,6 @@ repos:
       # - id: nbqa-isort
       #   args: ["--float-to-top"]
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: "6a0ba1854991b693612486cc84a2254de82d071d"
+    rev: "9e466ccca34e1b6b1e3a160152db786b8bc4c788"
     hooks:
       - id: ruff

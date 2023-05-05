@@ -7,8 +7,8 @@ from kgeneric.pdk import LAYER
 from kgeneric import cells
 
 
-pdk = Pdk(name="generic", cells=get_cells(cells), layers=LAYER)
+pdk = Pdk(name="generic", cell_factories=get_cells(cells), layers=LAYER)
 pdk.activate()
 
 
-__all__ = ("pdk",)
+# __all__ = ("pdk",)

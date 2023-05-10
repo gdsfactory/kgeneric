@@ -20,7 +20,7 @@ class GeometryDifference(ValueError):
 wg_enc = kf.utils.Enclosure(name="WGSTD", sections=[(LAYER.WGCLAD, 0, 2000)])
 
 waveguide = partial(
-    cells.waveguide.waveguide, width=0.5, length=1, layer=LAYER.WG, enclosure=wg_enc
+    cells.waveguide, width=0.5, length=1, layer=LAYER.WG, enclosure=wg_enc
 )
 
 
@@ -53,7 +53,7 @@ def DC() -> kf.KCell:
 
 
 def taper() -> kf.KCell:
-    c = cells.taper.taper(
+    c = cells.taper(
         width1=0.5,
         width2=1,
         length=10,

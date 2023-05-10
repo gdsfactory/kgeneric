@@ -1,6 +1,7 @@
 """kgeneric - KLayout extras for KCells, PDK and generic_tech"""
 
 __version__ = "0.0.1"
+import kfactory as kf 
 from kfactory.pdk import Pdk, get_cells
 
 from kgeneric.pdk import LAYER

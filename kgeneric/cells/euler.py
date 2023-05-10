@@ -267,14 +267,14 @@ def bend_s_euler(
         p1 = backbone[0].to_itype(dbu)
         p2 = backbone[-1].to_itype(dbu)
     c.create_port(
-        name="W0",
+        name="o1",
         trans=kdb.Trans(2, False, p1.to_v()),
         width=int(width / c.kcl.dbu),
         port_type="optical",
         layer=layer,
     )
     c.create_port(
-        name="E0",
+        name="o2",
         trans=kdb.Trans(0, False, p2.to_v()),
         width=int(width / c.kcl.dbu),
         port_type="optical",
@@ -287,4 +287,5 @@ if __name__ == "__main__":
     from kgeneric.pdk import LAYER
 
     c = bend_euler(width=1, radius=10, layer=LAYER.WG)
+    c.draw_ports()
     c.show()

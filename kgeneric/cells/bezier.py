@@ -67,17 +67,19 @@ def bend_s(
     extrude_path(c, path=pts, layer=layer, width=width, start_angle=0, end_angle=0)
     if enclosure:
         enclosure.extrude_path(c, pts, layer, width, start_angle=0, end_angle=0)
+        # enclosure.apply_minkowski_tiled(c)
+        # enclosure.apply_bbox(c)
 
     bbox_layer = c.bbox_per_layer(layer)
     c.create_port(
-        name="W0",
+        name="o1",
         width=int(width / c.kcl.dbu),
         trans=kdb.Trans(2, True, 0, 0),
         layer=layer,
         port_type="optical",
     )
     c.create_port(
-        name="E0",
+        name="o2",
         width=int(width / c.kcl.dbu),
         trans=kdb.Trans(
             0, False, bbox_layer.right, bbox_layer.top - int(width / c.kcl.dbu) // 2

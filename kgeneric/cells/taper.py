@@ -6,7 +6,7 @@ TODO: Non-linear tapers.
 
 
 from kfactory import KCell, LayerEnum, kcl
-from kfactory.utils import Enclosure
+from kfactory.utils import LayerEnclosure
 
 from kgeneric.cells.dbu.taper import taper as taper_dbu
 
@@ -18,7 +18,7 @@ def taper(
     width2: float,
     length: float,
     layer: int | LayerEnum,
-    enclosure: Enclosure | None = None,
+    enclosure: LayerEnclosure | None = None,
 ) -> KCell:
     r"""Linear Taper [um].
 

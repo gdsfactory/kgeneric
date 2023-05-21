@@ -6,7 +6,7 @@ from kfactory import cell
 from kfactory.kcell import LayerEnum
 from kfactory.routing.optical import route
 from kfactory.typings import CellSpec
-from kfactory.utils.enclosure import Enclosure
+from kfactory.utils.enclosure import LayerEnclosure
 
 from kgeneric.cells.dbu.waveguide import waveguide as waveguide_dbu
 from kgeneric.cells.DCs import coupler
@@ -29,13 +29,11 @@ def mzi(
     with_splitter: bool = True,
     port_e1_splitter: str = "o3",
     port_e0_splitter: str = "o4",
-    port_e1_combiner: str = "o2",
     port_e0_combiner: str = "o1",
-    nbends: int = 2,
     width: float = 1.0,
     layer: int | LayerEnum = 0,
     radius: float = 5.0,
-    enclosure: Optional[Enclosure] = None,
+    enclosure: Optional[LayerEnclosure] = None,
     **kwargs: Any,
 ) -> kf.KCell:
     """Mzi.
@@ -53,9 +51,7 @@ def mzi(
         with_splitter: if False removes splitter.
         port_e1_splitter: east top splitter port.
         port_e0_splitter: east bot splitter port.
-        port_e1_combiner: east top combiner port.
         port_e0_combiner: east bot combiner port.
-        nbends: from straight top/bot to combiner (at least 2).
         width: waveguide width.
         layer: waveguide layer.
         radius: bend radius.
@@ -227,7 +223,7 @@ if __name__ == "__main__":
     from kgeneric import pdk
 
     um = 1 / pdk.kcl.dbu
-    enclosure = Enclosure(
+    enclosure = LayerEnclosure(
         [
             (LAYER.DEEPTRENCH, 2 * um, 3 * um),
             (LAYER.SLAB90, 2 * um),

@@ -4,7 +4,7 @@ from kfactory import KCell, cell, kdb
 
 from kfactory.kcell import LayerEnum
 
-from kfactory.utils.enclosure import Enclosure
+from kfactory.utils.enclosure import LayerEnclosure
 
 from kgeneric.pdk import LAYER
 from kgeneric.cells.bezier import bend_s
@@ -19,7 +19,7 @@ def coupler(
     dx: float = 5.0,
     width: float = 0.5,
     layer: Union[int, LayerEnum] = LAYER.WG,
-    enclosure: Enclosure = Enclosure(),
+    enclosure: LayerEnclosure = LayerEnclosure(),
 ) -> KCell:
     r"""Symmetric coupler.
     Args:
@@ -96,7 +96,7 @@ def straight_coupler(
     length: float = 10.0,
     width: float = 0.5,
     layer: Union[int, LayerEnum] = LAYER.WG,
-    enclosure: Enclosure = Enclosure(),
+    enclosure: LayerEnclosure = LayerEnclosure(),
 ) -> KCell:
     """Straight coupler.
 
@@ -127,7 +127,7 @@ if __name__ == "__main__":
     from kgeneric import pdk
 
     um = 1 / pdk.kcl.dbu
-    enclosure = Enclosure(
+    enclosure = LayerEnclosure(
         [
             (LAYER.DEEPTRENCH, 2 * um, 3 * um),
             (LAYER.SLAB90, 2 * um),

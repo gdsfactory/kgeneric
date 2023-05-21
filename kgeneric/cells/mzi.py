@@ -233,4 +233,9 @@ if __name__ == "__main__":
     )
     c = mzi(length_x=1, with_splitter=True, enclosure=enclosure)
     c.draw_ports()
+    r0 = c.insts[0]
+    r1 = c.insts[1]
+    r2 = c.insts[2]
+    print(r0)
+    print(list(c.insts))
     c.show()

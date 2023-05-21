@@ -27,7 +27,7 @@ import kgeneric as kg
 # %%
 
 c = kg.cells.bend_circular(theta="90", theta_step="1")
-c
+c.plot()
 
 
 # %% [markdown]
@@ -36,7 +36,7 @@ c
 # %%
 
 c = kg.cells.bend_euler(theta="90", resolution="150")
-c
+c.plot()
 
 
 # %% [markdown]
@@ -45,7 +45,7 @@ c
 # %%
 
 c = kg.cells.bend_s(nb_points="99", t_start="0", t_stop="1")
-c
+c.plot()
 
 
 # %% [markdown]
@@ -54,7 +54,7 @@ c
 # %%
 
 c = kg.cells.bend_s_euler(resolution="150")
-c
+c.plot()
 
 
 # %% [markdown]
@@ -63,7 +63,7 @@ c
 # %%
 
 c = kg.cells.coupler(gap="0p2", length="10", dy="5", dx="5", width="0p5", layer="WG")
-c
+c.plot()
 
 
 # %% [markdown]
@@ -78,14 +78,12 @@ c = kg.cells.mzi(
     with_splitter="True",
     port_e1_splitter="o3",
     port_e0_splitter="o4",
-    port_e1_combiner="o2",
     port_e0_combiner="o1",
-    nbends="2",
     width="1",
     layer="0",
     radius="5",
 )
-c
+c.plot()
 
 
 # %% [markdown]
@@ -94,7 +92,7 @@ c
 # %%
 
 c = kg.cells.straight_coupler(gap="0p2", length="10", width="0p5", layer="WG")
-c
+c.plot()
 
 
 # %% [markdown]
@@ -103,7 +101,7 @@ c
 # %%
 
 c = kg.cells.taper()
-c
+c.plot()
 
 
 # %% [markdown]
@@ -112,4 +110,4 @@ c
 # %%
 
 c = kg.cells.waveguide()
-c
+c.plot()

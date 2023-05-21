@@ -237,6 +237,7 @@ undercut_thickness = 5.0
 #         undercut_thickness: thickness of the silicon undercut.
 #     """
 
+
 class GenericLayerStack(LayerStack):
     substrate = LayerLevel(
         layer=LAYER.WAFER,

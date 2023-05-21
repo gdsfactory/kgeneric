@@ -41,7 +41,7 @@ def coupler(
          o1                                          o4
     """
     c = KCell()
-    enclosure = enclosure if enclosure is not None else Enclosure()
+    enclosure = enclosure if enclosure is not None else LayerEnclosure()
     sbend = c << bend_s(
         width=width,
         height=((dy) / 2 - gap / 2 - width / 2),

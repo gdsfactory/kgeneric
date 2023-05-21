@@ -4,7 +4,7 @@ from typing import Any, Callable, Optional
 import kfactory as kf
 from kfactory import cell
 from kfactory.kcell import LayerEnum
-from kfactory.routing.optical import connect
+from kfactory.routing.optical import route
 from kfactory.typings import CellSpec
 from kfactory.utils.enclosure import Enclosure
 
@@ -197,14 +197,14 @@ def mzi(
         kf.kdb.Trans(sxt.ports["o2"].x - cp2.ports["o1"].x + 2 * bend_width, 0)
     )
 
-    connect(
+    route(
         c,
         cp2.ports["o2"],
         sxt.ports["o2"],
         straight_connect,
         bend,
     )
-    connect(
+    route(
         c,
         cp2.ports["o1"],
         sxb.ports["o2"],

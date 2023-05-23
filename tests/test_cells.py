@@ -1,4 +1,3 @@
-from inspect import signature
 from functools import partial
 import pathlib
 import pytest

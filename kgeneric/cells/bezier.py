@@ -7,7 +7,7 @@ import numpy.typing as nty
 from scipy.special import binom  # type: ignore[import]
 
 from kfactory import KCell, LayerEnum, cell, kdb
-from kfactory.utils.enclosure import Enclosure
+from kfactory.utils.enclosure import LayerEnclosure
 from kfactory.utils.enclosure import extrude_path
 
 __all__ = ["bend_s"]
@@ -38,7 +38,7 @@ def bend_s(
     nb_points: int = 99,
     t_start: float = 0,
     t_stop: float = 1,
-    enclosure: Enclosure | None = None,
+    enclosure: LayerEnclosure | None = None,
 ) -> KCell:
     """Creat a bezier bend.
 
@@ -97,7 +97,7 @@ if __name__ == "__main__":
     from kgeneric import pdk
 
     um = 1 / pdk.kcl.dbu
-    enclosure = Enclosure(
+    enclosure = LayerEnclosure(
         [
             (LAYER.DEEPTRENCH, 2 * um, 3 * um),
             (LAYER.SLAB90, 2 * um),

@@ -4,6 +4,7 @@ install:
 
 dev:
 	pip install -e .[dev,docs]
+	pip install git+https://github.com/gdsfactory/kfactory.git
 
 test:
 	pytest -s

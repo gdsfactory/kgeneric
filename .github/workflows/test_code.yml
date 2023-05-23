@@ -30,7 +30,7 @@ jobs:
           cache-dependency-path: pyproject.toml
       - name: Install dependencies
         run: |
-          pip install -e .[tests]
+          make dev
       - name: Test with pytest
         run: pytest
   test_code_coverage:
@@ -43,10 +43,10 @@ jobs:
           python-version: '3.10'
       - name: Install dependencies
         run: |
-          pip install -e .[tests]
+          make dev
       - name: Test with pytest
         run: |
-          pytest --cov={{ cookiecutter.package_name }} {{ cookiecutter.package_name }}
+          pytest --cov=kgeneric
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:

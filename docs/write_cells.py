@@ -61,7 +61,7 @@ import kgeneric as kg
 # %%
 
 c = kg.cells.{name}({kwargs})
-c
+c.plot()
 
 """
         )

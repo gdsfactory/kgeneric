@@ -1,4 +1,3 @@
-from inspect import signature
 from functools import partial
 import pathlib
 import pytest
@@ -17,7 +16,7 @@ class GeometryDifference(ValueError):
     pass
 
 
-wg_enc = kf.utils.Enclosure(name="WGSTD", sections=[(LAYER.WGCLAD, 0, 2000)])
+wg_enc = kf.utils.LayerEnclosure(name="WGSTD", sections=[(LAYER.WGCLAD, 0, 2000)])
 
 waveguide = partial(
     cells.waveguide, width=0.5, length=1, layer=LAYER.WG, enclosure=wg_enc

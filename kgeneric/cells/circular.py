@@ -7,7 +7,7 @@ import numpy as np
 
 from kfactory import kdb
 from kfactory.kcell import KCell, LayerEnum, cell
-from kfactory.utils.enclosure import Enclosure
+from kfactory.utils.enclosure import LayerEnclosure
 from kfactory.utils.enclosure import extrude_path
 
 __all__ = ["bend_circular"]
@@ -18,7 +18,7 @@ def bend_circular(
     width: float,
     radius: float,
     layer: int | LayerEnum,
-    enclosure: Enclosure | None = None,
+    enclosure: LayerEnclosure | None = None,
     theta: float = 90,
     theta_step: float = 1,
 ) -> KCell:

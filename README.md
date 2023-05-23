@@ -1,4 +1,4 @@
-# KGeneric 0.0.1
+# KGeneric 0.0.2
 
 generic PDK for Kfactory
 

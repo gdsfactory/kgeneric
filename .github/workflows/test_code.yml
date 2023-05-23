@@ -46,7 +46,7 @@ jobs:
           make dev
       - name: Test with pytest
         run: |
-          pytest --cov={{ cookiecutter.package_name }} {{ cookiecutter.package_name }}
+          pytest --cov=kgeneric kgeneric
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:

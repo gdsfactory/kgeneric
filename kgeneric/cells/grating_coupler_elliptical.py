@@ -139,10 +139,10 @@ def grating_tooth(
     spiked: bool = True,
     angle_step: float = 1.0,
 ) -> kf.kdb.Region:
-    theta_min = -taper_angle / 2
-    theta_max = taper_angle / 2
+    angle_min = -taper_angle / 2
+    angle_max = taper_angle / 2
 
-    backbone_points = ellipse_arc(ap, bp, xp, theta_min, theta_max, angle_step)
+    backbone_points = ellipse_arc(ap, bp, xp, angle_min, angle_max, angle_step)
     if spiked:
         spike_length = width // 3
         path = kf.kdb.Path(backbone_points, width).polygon()
@@ -199,13 +199,13 @@ def ellipse_arc(
     a: float,
     b: float,
     x0: int,
-    theta_min: float,
-    theta_max: float,
+    angle_min: float,
+    angle_max: float,
     angle_step: float = 0.5,
 ) -> list[kf.kdb.Point]:
-    theta = np.arange(theta_min, theta_max + angle_step, angle_step) * np.pi / 180
-    xs = a * np.cos(theta) + x0
-    ys = b * np.sin(theta)
+    angle = np.arange(angle_min, angle_max + angle_step, angle_step) * np.pi / 180
+    xs = a * np.cos(angle) + x0
+    ys = b * np.sin(angle)
     return [kf.kdb.Point(x, y) for x, y in zip(xs, ys)]  # np.column_stack([xs, ys])
 
 

@@ -25,30 +25,42 @@ waveguide = partial(
 
 def bend90() -> kf.KCell:
     return cells.circular.bend_circular(
-        width=1, radius=10, layer=LAYER.WG, enclosure=wg_enc, theta=90
+        width=1, radius=10, layer=LAYER.WG, enclosure=wg_enc, angle=90
     )
 
 
 def bend180() -> kf.KCell:
     return cells.circular.bend_circular(
-        width=1, radius=10, layer=LAYER.WG, enclosure=wg_enc, theta=180
+        width=1, radius=10, layer=LAYER.WG, enclosure=wg_enc, angle=180
     )
 
 
 def bend90_euler() -> kf.KCell:
     return cells.euler.bend_euler(
-        width=1, radius=10, layer=LAYER.WG, enclosure=wg_enc, theta=90
+        width=1, radius=10, layer=LAYER.WG, enclosure=wg_enc, angle=90
     )
 
 
 def bend180_euler() -> kf.KCell:
     return cells.euler.bend_euler(
-        width=1, radius=10, layer=LAYER.WG, enclosure=wg_enc, theta=180
+        width=1, radius=10, layer=LAYER.WG, enclosure=wg_enc, angle=180
     )
 
 
-def DC() -> kf.KCell:
-    return cells.DC()
+def coupler() -> kf.KCell:
+    return cells.coupler()
+
+
+def straight_coupler() -> kf.KCell:
+    return cells.straight_coupler()
+
+
+def GC_TE() -> kf.KCell:
+    return cells.GC_TE()
+
+
+def GC_TM() -> kf.KCell:
+    return cells.GC_TM()
 
 
 def taper() -> kf.KCell:
@@ -69,6 +81,10 @@ cell_factories = dict(
     bend180=bend180,
     bend180_euler=bend180_euler,
     bend90_euler=bend90_euler,
+    coupler=coupler,
+    gc_te=GC_TE,
+    gc_tm=GC_TM,
+    straight_coupler=straight_coupler,
     taper=taper,
     waveguide=waveguide,
 )

@@ -59,8 +59,8 @@ def coupler(
 
     wg = c << straight_coupler(gap, length, width, layer, enclosure)
 
-    sbend.align("o2", wg.ports["o1"])
-    sbend_2.align("o2", wg.ports["o4"])
+    sbend.connect("o2", wg.ports["o1"])
+    sbend_2.connect("o2", wg.ports["o4"])
     sbend_r_top = c << bend_s(
         width=width,
         height=(dy / 2 - width / 2 - gap / 2),
@@ -76,8 +76,8 @@ def coupler(
         enclosure=enclosure,
     )
 
-    sbend_r_top.align("o1", wg.ports["o3"])
-    sbend_r_bottom.align("o1", wg.ports["o2"])
+    sbend_r_top.connect("o1", wg.ports["o3"])
+    sbend_r_bottom.connect("o1", wg.ports["o2"])
 
     # sbend_r_top.transform(kdb.DTrans(0, False, 0, 0))
     # sbend_r_bottom.transform(kdb.DTrans(0, False, 0, 0))

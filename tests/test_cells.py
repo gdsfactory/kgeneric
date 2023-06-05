@@ -47,8 +47,20 @@ def bend180_euler() -> kf.KCell:
     )
 
 
-def DC() -> kf.KCell:
-    return cells.DC()
+def coupler() -> kf.KCell:
+    return cells.coupler()
+
+
+def straight_coupler() -> kf.KCell:
+    return cells.straight_coupler()
+
+
+def GC_TE() -> kf.KCell:
+    return cells.GC_TE()
+
+
+def GC_TM() -> kf.KCell:
+    return cells.GC_TM()
 
 
 def taper() -> kf.KCell:
@@ -69,6 +81,10 @@ cell_factories = dict(
     bend180=bend180,
     bend180_euler=bend180_euler,
     bend90_euler=bend90_euler,
+    coupler=coupler,
+    gc_te=GC_TE,
+    gc_tm=GC_TM,
+    straight_coupler=straight_coupler,
     taper=taper,
     waveguide=waveguide,
 )

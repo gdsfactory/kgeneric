@@ -165,7 +165,7 @@ def bend_euler(
     radius: float,
     layer: int | LayerEnum,
     enclosure: LayerEnclosure | None = None,
-    theta: float = 90,
+    angle: float = 90,
     resolution: float = 150,
 ) -> KCell:
     """Create a euler bend.
@@ -175,12 +175,12 @@ def bend_euler(
         radius: Radius off the backbone. [um]
         layer: Layer index / LayerEnum of the core.
         enclosure: Slab/exclude definition. [dbu]
-        theta: Angle of the bend.
+        angle: Angle of the bend.
         resolution: Angle resolution for the backbone.
     """
     c = KCell()
     dbu = c.layout().dbu
-    backbone = euler_bend_points(theta, radius=radius, resolution=resolution)
+    backbone = euler_bend_points(angle, radius=radius, resolution=resolution)
 
     extrude_path(
         target=c,
@@ -189,10 +189,10 @@ def bend_euler(
         width=width,
         enclosure=enclosure,
         start_angle=0,
-        end_angle=theta,
+        end_angle=angle,
     )
 
-    if theta == 90:
+    if angle == 90:
         c.create_port(
             name="W0",
             layer=layer,
@@ -205,7 +205,7 @@ def bend_euler(
             width=int(width / c.kcl.dbu),
             trans=kdb.Trans(1, False, backbone[-1].to_itype(dbu).to_v()),
         )
-    elif theta == 180:
+    elif angle == 180:
         c.create_port(
             name="W0",
             layer=layer,

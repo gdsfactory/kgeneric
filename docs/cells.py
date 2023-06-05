@@ -26,7 +26,7 @@ import kgeneric as kg
 
 # %%
 
-c = kg.cells.bend_circular(theta="90", theta_step="1")
+c = kg.cells.bend_circular(angle="90", angle_step="1")
 c.plot()
 
 
@@ -35,7 +35,7 @@ c.plot()
 
 # %%
 
-c = kg.cells.bend_euler(theta="90", resolution="150")
+c = kg.cells.bend_euler(angle="90", resolution="150")
 c.plot()
 
 

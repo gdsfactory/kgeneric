@@ -8,10 +8,10 @@ from kfactory.routing.optical import route
 from kfactory.typings import CellSpec
 from kfactory.utils.enclosure import LayerEnclosure
 
-from kgeneric.cells.dbu.waveguide import waveguide as waveguide_dbu
+from kgeneric.cells.dbu.straight import straight as straight_dbu
 from kgeneric.cells.DCs import coupler
 from kgeneric.cells.euler import bend_euler
-from kgeneric.cells.waveguide import waveguide as straight_function
+from kgeneric.cells.straight import straight as straight_function
 
 
 @cell
@@ -52,7 +52,7 @@ def mzi(
         port_e1_splitter: east top splitter port.
         port_e0_splitter: east bot splitter port.
         port_e0_combiner: east bot combiner port.
-        width: waveguide width.
+        width: straight width.
         layer: waveguide layer.
         radius: bend radius.
         enclosure: waveguide enclosure.
@@ -99,7 +99,7 @@ def mzi(
     }
     bend = kf.kcl.pdk.get_cell(bend_component, **bend_settings)
     c = kf.KCell()
-    straight_connect = partial(waveguide_dbu, layer=layer, enclosure=enclosure)
+    straight_connect = partial(straight_dbu, layer=layer, enclosure=enclosure)
     combiner_settings = {
         "width": width,
         "layer": layer,

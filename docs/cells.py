@@ -22,6 +22,24 @@ import kgeneric as kg
 
 
 # %% [markdown]
+## GC_TE
+
+# %%
+
+c = kg.cells.GC_TE()
+c.plot()
+
+
+# %% [markdown]
+## GC_TM
+
+# %%
+
+c = kg.cells.GC_TM()
+c.plot()
+
+
+# %% [markdown]
 ## bend_circular
 
 # %%
@@ -87,6 +105,15 @@ c.plot()
 
 
 # %% [markdown]
+## straight
+
+# %%
+
+c = kg.cells.straight()
+c.plot()
+
+
+# %% [markdown]
 ## straight_coupler
 
 # %%
@@ -101,13 +128,4 @@ c.plot()
 # %%
 
 c = kg.cells.taper()
-c.plot()
-
-
-# %% [markdown]
-## waveguide
-
-# %%
-
-c = kg.cells.waveguide()
 c.plot()

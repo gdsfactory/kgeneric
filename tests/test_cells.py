@@ -18,8 +18,8 @@ class GeometryDifference(ValueError):
 
 wg_enc = kf.utils.LayerEnclosure(name="WGSTD", sections=[(LAYER.WGCLAD, 0, 2000)])
 
-waveguide = partial(
-    cells.waveguide, width=0.5, length=1, layer=LAYER.WG, enclosure=wg_enc
+straight = partial(
+    cells.straight, width=0.5, length=1, layer=LAYER.WG, enclosure=wg_enc
 )
 
 
@@ -86,7 +86,7 @@ cell_factories = dict(
     gc_tm=GC_TM,
     straight_coupler=straight_coupler,
     taper=taper,
-    waveguide=waveguide,
+    straight=straight,
 )
 
 cell_names = set(cell_factories.keys())

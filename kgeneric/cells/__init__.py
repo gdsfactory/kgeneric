@@ -7,7 +7,7 @@ from .euler import bend_euler, bend_s_euler
 from .gc import GC_TE, GC_TM
 from .mzi import mzi
 from .taper import taper
-from .waveguide import waveguide
+from .straight import straight
 
 __all__ = [
     "bend_s",
@@ -20,5 +20,5 @@ __all__ = [
     "mzi",
     "straight_coupler",
     "taper",
-    "waveguide",
+    "straight",
 ]

@@ -8,7 +8,7 @@ from kfactory.utils.enclosure import LayerEnclosure
 
 from kgeneric.pdk import LAYER
 from kgeneric.cells.bezier import bend_s
-from kgeneric.cells.waveguide import waveguide
+from kgeneric.cells.straight import straight
 
 
 @cell
@@ -28,7 +28,7 @@ def coupler(
         dy: port to port vertical spacing in um.
         dx: length of bend in x direction in um.
         layer: layer number or name.
-        enclosure: waveguide enclosure.
+        enclosure: straight enclosure.
     .. code::
                dx                                 dx
             |------|                           |------|
@@ -104,14 +104,14 @@ def straight_coupler(
         gap: between straights in um.
         length: of coupling region in um.
         layer: layer number or name.
-        enclosure: waveguide enclosure.
+        enclosure: straight enclosure.
     """
     c = KCell()
 
-    wg_top = c << waveguide(width, length, layer, enclosure)
+    wg_top = c << straight(width, length, layer, enclosure)
     wg_top.trans = kdb.Trans(0, True, 0, int((gap + width) / 2 / c.kcl.dbu))
 
-    wg_bottom = c << waveguide(width, length, layer, enclosure)
+    wg_bottom = c << straight(width, length, layer, enclosure)
     wg_bottom.trans = kdb.Trans(0, False, 0, -int((gap + width) / 2 / c.kcl.dbu))
 
     c.add_port(name="o1", port=wg_top.ports["o1"])

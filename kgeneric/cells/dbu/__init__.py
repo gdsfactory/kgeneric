@@ -1,4 +1,4 @@
 from .taper import taper
-from .waveguide import waveguide
+from .straight import straight
 
-__all__ = ["waveguide", "taper"]
+__all__ = ["straight", "taper"]

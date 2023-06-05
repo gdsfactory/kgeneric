@@ -1,6 +1,6 @@
 """Provides straight waveguides in dbu and um versions.
 
-A waveguide is a rectangle of material with excludes and/or slab around it::
+A straight is a rectangle of material with excludes and/or slab around it::
 
     ┌─────────────────────────────┐
     │        Slab/Exclude         │
@@ -18,18 +18,18 @@ The slabs and excludes can be given in the form of an :py:class:~`Enclosure`.
 
 from kfactory import KCell, LayerEnum, kcl
 from kfactory.utils import LayerEnclosure
-from kgeneric.cells.dbu.waveguide import waveguide as waveguide_dbu
+from kgeneric.cells.dbu.straight import straight as straight_dbu
 
-__all__ = ["waveguide", "waveguide_dbu"]
+__all__ = ["straight", "straight_dbu"]
 
 
-def waveguide(
+def straight(
     width: float,
     length: float,
     layer: int | LayerEnum,
     enclosure: LayerEnclosure | None = None,
 ) -> KCell:
-    """Straight waveguide in um.
+    """Straight straight in um.
 
     Visualization::
 
@@ -44,12 +44,12 @@ def waveguide(
         └─────────────────────────────┘
 
     Args:
-        width: Width of the waveguide. [um]
-        length: Length of the waveguide. [um]
+        width: Width of the straight. [um]
+        length: Length of the straight. [um]
         layer: Layer index / :py:class:~`LayerEnum`
         enclosure: Definition of slabs/excludes. [um]
     """
-    return waveguide_dbu(
+    return straight_dbu(
         int(width / kcl.dbu), int(length / kcl.dbu), layer, enclosure=enclosure
     )
 
@@ -57,5 +57,5 @@ def waveguide(
 if __name__ == "__main__":
     from kgeneric.pdk import LAYER
 
-    c = waveguide(width=1, length=10, layer=LAYER.WG)
+    c = straight(width=1, length=10, layer=LAYER.WG)
     c.show()

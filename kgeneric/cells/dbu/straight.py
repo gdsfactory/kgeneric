@@ -1,6 +1,6 @@
 """Straight waveguide in dbu.
 
-A waveguide is a rectangle of material with excludes and/or slab around it::
+A straight is a rectangle of material with excludes and/or slab around it::
 
     ┌──────────────────────────────┐
     │         Slab/Exclude         │
@@ -18,11 +18,11 @@ The slabs and excludes can be given in the form of an :py:class:~`Enclosure`.
 from kfactory import KCell, LayerEnum, cell, kdb
 from kfactory.utils import LayerEnclosure
 
-__all__ = ["waveguide"]
+__all__ = ["straight"]
 
 
 @cell
-def waveguide(
+def straight(
     width: int,
     length: int,
     layer: int | LayerEnum,

@@ -1,9 +1,54 @@
 import inspect
 import pathlib
-from kfactory.kcell import clean_value
-from kgeneric import cells_dict as cells
+import numpy as np
+from kgeneric.tests.test_cells import cell_factories as cells
+from kfactory.kcell import KCell, Any, clean_name, Callable
+from kfactory.kcell import LayerEnum
 
-filepath = pathlib.Path(__file__).parent.absolute() / "cells.py"
+
+def dict2name(prefix: str = "", **kwargs) -> str:
+    """Returns name from a dict."""
+    ignore_from_name = kwargs.pop("ignore_from_name", [])
+    kv = []
+    kwargs = kwargs.copy()
+    kwargs.pop("layer_to_inclusion", "")
+
+    for key in sorted(kwargs):
+        if key not in ignore_from_name and isinstance(key, str):
+            value = kwargs[key]
+            # key = join_first_letters(key).upper()
+            if value is not None:
+                kv += [f"{key}{clean_name(value)}"]
+    label = prefix + "_".join(kv)
+    return clean_name(label)
+
+
+def clean_value_json(
+    value: float | np.float64 | dict[Any, Any] | KCell | Callable[..., Any]
+) -> float | np.float64:
+    """Makes sure a value is representable in a limited character_space."""
+    try:
+        if isinstance(value, int):  # integer
+            return value
+        elif isinstance(value, LayerEnum):
+            return value.name
+        elif type(value) in [float, np.float64]:  # float
+            return np.round(value, 3)
+        elif isinstance(value, (tuple, list)):
+            return value
+        elif isinstance(value, dict):
+            return dict2name(**value)
+        elif hasattr(value, "name"):
+            return clean_name(value.name)
+        elif callable(value):
+            return str(value.__name__)
+        else:
+            return clean_name(value)
+    except TypeError:  # use the __str__ method
+        return clean_name(value)
+
+
+filepath = pathlib.Path(__file__).parent.absolute() / "cells.rst"
 
 skip = {}
 skip_plot = []
@@ -13,28 +58,13 @@ skip_settings = {}
 with open(filepath, "w+") as f:
     f.write(
         """
+Here are some generic Parametric cells.
 
-# ---
-# jupyter:
-#   jupytext:
-#     custom_cell_magics: kql
-#     text_representation:
-#       extension: .py
-#       format_name: percent
-#       format_version: '1.3'
-#       jupytext_version: 1.11.2
-#   kernelspec:
-#     display_name: Python 3 (ipykernel)
-#     language: python
-#     name: python3
-# ---
+You can customize them your fab or use them as an inspiration to build your own.
 
-# %% [markdown]
-# # Cells
 
-# %%
-
-import kgeneric as kg
+Parametric cells
+=============================
 
 """
     )
@@ -46,22 +76,39 @@ import kgeneric as kg
         sig = inspect.signature(cells[name])
         kwargs = ", ".join(
             [
-                f"{p}={repr(clean_value(sig.parameters[p].default))}"
+                f"{p}={repr(clean_value_json(sig.parameters[p].default))}"
                 for p in sig.parameters
                 if isinstance(sig.parameters[p].default, (int, float, str, tuple))
                 and p not in skip_settings
             ]
         )
-        f.write(
-            f"""
+        if name in skip_plot:
+            f.write(
+                f"""
 
-# %% [markdown]
-## {name}
+{name}
+----------------------------------------------------
 
-# %%
-
-c = kg.cells.{name}({kwargs})
-c.plot()
+.. autofunction:: kgeneric.cells.{name}
 
 """
-        )
+            )
+        else:
+            f.write(
+                f"""
+
+{name}
+----------------------------------------------------
+
+.. autofunction:: kgeneric.cells.{name}
+
+.. plot::
+  :include-source:
+
+  import kgeneric.cells as kc
+
+  c = kc.{name}({kwargs})
+  c.plot()
+
+"""
+            )

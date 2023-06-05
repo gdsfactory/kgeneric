@@ -22,69 +22,82 @@ straight = partial(
     cells.straight, width=0.5, length=1, layer=LAYER.WG, enclosure=wg_enc
 )
 
-
-def bend90() -> kf.KCell:
-    return cells.circular.bend_circular(
-        width=1, radius=10, layer=LAYER.WG, enclosure=wg_enc, angle=90
-    )
-
-
-def bend180() -> kf.KCell:
-    return cells.circular.bend_circular(
-        width=1, radius=10, layer=LAYER.WG, enclosure=wg_enc, angle=180
-    )
+bend90 = partial(
+    cells.circular.bend_circular,
+    width=1,
+    radius=10,
+    layer=LAYER.WG,
+    enclosure=wg_enc,
+    angle=90,
+)
 
 
-def bend90_euler() -> kf.KCell:
-    return cells.euler.bend_euler(
-        width=1, radius=10, layer=LAYER.WG, enclosure=wg_enc, angle=90
-    )
+bend180 = partial(
+    cells.circular.bend_circular,
+    width=1,
+    radius=10,
+    layer=LAYER.WG,
+    enclosure=wg_enc,
+    angle=180,
+)
 
 
-def bend180_euler() -> kf.KCell:
-    return cells.euler.bend_euler(
-        width=1, radius=10, layer=LAYER.WG, enclosure=wg_enc, angle=180
-    )
+bend90_euler = partial(
+    cells.euler.bend_euler,
+    width=1,
+    radius=10,
+    layer=LAYER.WG,
+    enclosure=wg_enc,
+    angle=90,
+)
 
 
-def coupler() -> kf.KCell:
-    return cells.coupler()
+bend180_euler = partial(
+    cells.euler.bend_euler,
+    width=1,
+    radius=10,
+    layer=LAYER.WG,
+    enclosure=wg_enc,
+    angle=180,
+)
 
+coupler = cells.coupler
+straight_coupler = cells.straight_coupler
 
-def straight_coupler() -> kf.KCell:
-    return cells.straight_coupler()
+GC_TE = cells.GC_TE
+GC_TM = cells.GC_TM
 
+taper = partial(
+    cells.taper,
+    width1=0.5,
+    width2=1,
+    length=10,
+    layer=LAYER.WG,
+    enclosure=wg_enc,
+)
 
-def GC_TE() -> kf.KCell:
-    return cells.GC_TE()
+bend_s_euler = partial(
+    cells.bend_s_euler,
+    offset=0,
+    width=0.5,
+    radius=5,
+    layer=LAYER.WG,
+    enclosure=wg_enc,
+)
 
-
-def GC_TM() -> kf.KCell:
-    return cells.GC_TM()
-
-
-def taper() -> kf.KCell:
-    c = cells.taper(
-        width1=0.5,
-        width2=1,
-        length=10,
-        layer=LAYER.WG,
-        enclosure=wg_enc,
-    )
-    c = c.dup()
-    c.name = "taper"
-    return c
+mzi = cells.mzi
+straight_coupler = cells.straight_coupler
 
 
 cell_factories = dict(
-    bend90=bend90,
-    bend180=bend180,
-    bend180_euler=bend180_euler,
-    bend90_euler=bend90_euler,
+    bend_circular=bend90,
+    bend_euler=bend90_euler,
+    bend_s_euler=bend_s_euler,
     coupler=coupler,
-    gc_te=GC_TE,
-    gc_tm=GC_TM,
+    GC_TE=GC_TE,
+    GC_TM=GC_TM,
     straight_coupler=straight_coupler,
+    mzi=mzi,
     taper=taper,
     straight=straight,
 )
@@ -100,7 +113,7 @@ def cell_name(request):
 
 def test_cells(cell_name: str) -> None:
     """Ensure cells have the same geometry as their golden references."""
-    gds_ref = pathlib.Path(__file__).parent.parent / "gds" / "gds_ref"
+    gds_ref = pathlib.Path(__file__).parent / "gds" / "gds_ref"
     cell = cell_factories[cell_name]()
     ref_file = gds_ref / f"{cell.name}.gds"
     run_cell = cell

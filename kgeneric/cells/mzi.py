@@ -118,7 +118,7 @@ def mzi(
     cp2 = c << _cp1
     b5 = c << bend
     # b5.transform(kf.kdb.Trans.M90)
-    b5.align("W0", cp2.ports[port_e0_splitter])
+    b5.connect("W0", cp2.ports[port_e0_splitter])
     # b5.instance.transform(kf.kdb.Trans(1, False, 0, 0))
     # b5.transform(kf.kdb.Trans.M90.R180)
 
@@ -129,9 +129,9 @@ def mzi(
         layer=layer,
         enclosure=enclosure,
     )
-    syl.align("o1", b5.ports["N0"])
+    syl.connect("o1", b5.ports["N0"])
     b6 = c << bend
-    b6.align("W0", syl.ports["o2"], mirror=True)
+    b6.connect("W0", syl.ports["o2"], mirror=True)
     # b6.transform(kf.kdb.Trans.M90.R270)
 
     straight_x_bot = (
@@ -153,18 +153,18 @@ def mzi(
     )
 
     sxb = c << straight_x_bot
-    sxb.align("o1", b6.ports["N0"], mirror=True)
+    sxb.connect("o1", b6.ports["N0"], mirror=True)
 
     b1 = c << bend
-    b1.align("W0", cp1.ports[port_e1_splitter])
+    b1.connect("W0", cp1.ports[port_e1_splitter])
 
     sytl = c << kf.kcl.pdk.get_cell(
         straight_y, length=length_y, width=width, layer=layer, enclosure=enclosure
     )
-    sytl.align("o1", b1.ports["N0"])
+    sytl.connect("o1", b1.ports["N0"])
 
     b2 = c << bend
-    b2.align("N0", sytl.ports["o2"])
+    b2.connect("N0", sytl.ports["o2"])
     straight_x_top = (
         kf.kcl.pdk.get_cell(
             straight_x_top,
@@ -183,12 +183,12 @@ def mzi(
         )
     )
     sxt = c << straight_x_top
-    sxt.align("o1", b2.ports["W0"])
+    sxt.connect("o1", b2.ports["W0"])
 
     # cp2.transform(port_e0_combiner, cp1.ports[port_e0_splitter])
 
     bend_width = abs(bend.ports[0].x - bend.ports[1].x)
-    cp2.align(port_e0_combiner, cp1.ports[port_e0_splitter])
+    cp2.connect(port_e0_combiner, cp1.ports[port_e0_splitter])
     cp2.transform(
         kf.kdb.Trans(sxt.ports["o2"].x - cp2.ports["o1"].x + 2 * bend_width, 0)
     )

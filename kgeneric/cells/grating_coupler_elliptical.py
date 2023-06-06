@@ -1,4 +1,5 @@
 from typing import Literal, Optional
+from functools import partial
 
 import numpy as np
 
@@ -25,21 +26,41 @@ def grating_coupler_elliptical(
     taper_extent_n_periods: float | Literal["first"] | Literal["last"] = "last",
     period: Optional[int] = None,
     x_fiber_launch: Optional[int] = None,
+    clad_index: float = 1.443,  # cladding index
 ) -> kf.KCell:
-    DEG2RAD = np.pi / 180
+    """Returns elliptical grating coupler.
 
-    # Define some constants
-    nc = 1.443  # cladding index
-    # Compute some ellipse parameters
+    Args:
+        polarization: te or tm
+        taper_length: int = 16600,
+        taper_angle: in degrees.
+        trenches_extra_angle: in degrees.
+        lambda_c: wavelength.
+        fiber_angle:in degrees.
+        grating_line_width: int = 343,
+        wg_width: int = 500,
+        neff: float = 2.638,  # tooth effective index
+        layer_taper: Optional[LAYER] = LAYER.WG,
+        layer_trench: LAYER = LAYER.UNDERCUT,
+        p_start: int = 26,
+        n_periods: int = 30,
+        taper_offset: int = 0,
+        taper_extent_n_periods: float | Literal["first"] | Literal["last"] = "last",
+        period: Optional[int] = None,
+        x_fiber_launch: fiber launching position.
+        clad_index: cladding index.
+
+    """
+    DEG2RAD = np.pi / 180
     sthc = np.sin(fiber_angle * DEG2RAD)
 
     if period is not None:
-        neff = lambda_c / period + nc * sthc
+        neff = lambda_c / period + clad_index * sthc
 
-    d = neff**2 - nc**2 * sthc**2
+    d = neff**2 - clad_index**2 * sthc**2
     a1 = lambda_c * neff / d
     b1 = lambda_c / np.sqrt(d)
-    x1 = lambda_c * nc * sthc / d
+    x1 = lambda_c * clad_index * sthc / d
 
     a1 = round(a1 * 1e3)
     b1 = round(b1 * 1e3)
@@ -108,7 +129,6 @@ def grating_coupler_elliptical(
 
     # Add port
     c.settings["period"] = _period
-    # setattr(c.ports["W0"], "polarization", polarization)
 
     # Add GC Fibre launch reference port, we are putting it at the same place
     # as the other I/O port for now
@@ -122,11 +142,8 @@ def grating_coupler_elliptical(
         width=100,
         port_type="fibre_launch",
     )
-    # setattr(c.ports["FL"], "polarization", polarization)
-
     y0 = 0
     c.p0_overclad = x0, y0
-
     return c
 
 
@@ -163,14 +180,6 @@ def grating_tooth(
 
     else:
         reg = kf.kdb.Region(kf.kdb.Path(backbone_points, width))
-
-    # points = extrude_path(
-    #     backbone_points,
-    #     width,
-    #     with_manhattan_facing_angles=False,
-    #     spike_length=spike_length,
-    # )
-
     return reg
 
 
@@ -183,15 +192,12 @@ def grating_taper_points(
     wg_width: int,
     angle_step: float = 1.0,
 ) -> list[kf.kdb.Point]:
-    taper_arc = ellipse_arc(a, b, taper_length, -taper_angle / 2, taper_angle / 2)
+    taper_arc = ellipse_arc(
+        a, b, taper_length, -taper_angle / 2, taper_angle / 2, angle_step=angle_step
+    )
 
     p0 = kf.kdb.Point(x0, wg_width // 2)
     p1 = kf.kdb.Point(x0, -wg_width // 2)
-
-    # port_position = np.array((x0, 0))
-    # p0 = port_position + (0, wg_width / 2)
-    # p1 = port_position + (0, -wg_width / 2)
-    # points = np.vstack([p0, p1, taper_arc])
     return [p0, p1] + taper_arc
 
 
@@ -209,6 +215,36 @@ def ellipse_arc(
     return [kf.kdb.Point(x, y) for x, y in zip(xs, ys)]  # np.column_stack([xs, ys])
 
 
+grating_coupler_elliptical_te = partial(
+    grating_coupler_elliptical,
+    polarization="te",
+    taper_length=16600,
+    taper_angle=40,
+    lambda_c=1.554,
+    fiber_angle=15,
+    grating_line_width=343,
+    wg_width=500,
+    p_start=26,
+    n_periods=30,
+    taper_offset=-30,
+    x_fiber_launch=None,
+)
+
+grating_coupler_elliptical_tm = partial(
+    grating_coupler_elliptical,
+    polarization="tm",
+    taper_length=17000,
+    taper_angle=40.0,
+    lambda_c=1.58,
+    fiber_angle=15.0,
+    grating_line_width=550,
+    wg_width=500,
+    p_start=17,
+    n_periods=20,
+    neff=1.8,
+    taper_offset=-325,
+)
+
 if __name__ == "__main__":
-    c = grating_coupler_elliptical()
+    c = grating_coupler_elliptical(polarization="ti", taper_length="ada")
     c.show()

@@ -9,7 +9,7 @@ from kfactory.typings import CellSpec
 from kfactory.utils.enclosure import LayerEnclosure
 
 from kgeneric.cells.dbu.straight import straight as straight_dbu
-from kgeneric.cells.DCs import coupler
+from kgeneric.cells.coupler import coupler
 from kgeneric.cells.euler import bend_euler
 from kgeneric.cells.straight import straight as straight_function
 

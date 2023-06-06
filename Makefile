@@ -50,6 +50,7 @@ notebooks:
 	jupytext docs/**/*.py --to ipynb
 
 docs:
+	export KFACTORY_DISPLAY_TYPE=image
 	jb build docs
 
 .PHONY: drc doc docs

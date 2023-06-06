@@ -20,7 +20,8 @@ bend_circular
   import kgeneric.cells as kc
 
   c = kc.bend_circular(width=1, radius=10, layer=<LAYER.WG: 0>, angle=90, angle_step=1)
-  c.plot()
+  fig = c.plot()
+  glue("boot_fig", fig, display=True)
 
 
 
@@ -65,7 +66,8 @@ coupler
   import kgeneric.cells as kc
 
   c = kc.coupler(gap=0.2, length=10.0, dy=5.0, dx=5.0, width=0.5, layer=<LAYER.WG: 0>)
-  c.plot()
+  fig = c.plot()
+  glue("boot_fig", fig, display=True)
 
 
 

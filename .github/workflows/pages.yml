@@ -23,6 +23,8 @@ jobs:
         run: |
           make dev
       - name: make docs
+        env:
+          KFACTORY_DISPLAY_TYPE: image
         run: |
           make docs
       - name: Upload artifact

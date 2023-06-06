@@ -64,8 +64,7 @@ bend180_euler = partial(
 coupler = cells.coupler
 straight_coupler = cells.straight_coupler
 
-GC_TE = cells.GC_TE
-GC_TM = cells.GC_TM
+grating_coupler_elliptical = cells.grating_coupler_elliptical
 
 taper = partial(
     cells.taper,
@@ -94,8 +93,7 @@ cell_factories = dict(
     bend_euler=bend90_euler,
     bend_s_euler=bend_s_euler,
     coupler=coupler,
-    GC_TE=GC_TE,
-    GC_TM=GC_TM,
+    grating_coupler_elliptical=grating_coupler_elliptical,
     straight_coupler=straight_coupler,
     mzi=mzi,
     taper=taper,

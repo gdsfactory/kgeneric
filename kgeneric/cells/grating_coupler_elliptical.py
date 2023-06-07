@@ -17,7 +17,7 @@ def grating_coupler_elliptical(
     trenches_extra_angle: float = 10.0,
     lambda_c: float = 1.554,
     fiber_angle: float = 15.0,
-    grating_line_width: int = 343,
+    grating_line_width: float = 0.343,
     wg_width: float = 500 * nm,
     neff: float = 2.638,  # tooth effective index
     layer_taper: Optional[LAYER] = LAYER.WG,
@@ -64,9 +64,9 @@ def grating_coupler_elliptical(
     b1 = lambda_c / np.sqrt(d)
     x1 = lambda_c * clad_index * sthc / d
 
-    a1 = round(a1 * 1e3)
-    b1 = round(b1 * 1e3)
-    x1 = round(x1 * 1e3)
+    # a1 = round(a1 * 1e3)
+    # b1 = round(b1 * 1e3)
+    # x1 = round(x1 * 1e3)
 
     _period = a1 + x1
 
@@ -165,19 +165,19 @@ def grating_tooth(
     if spiked:
         spike_length = width // 3
         path = kf.kdb.DPath(backbone_points, width).polygon()
-        edges = kf.kdb.Edges([path])
+        edges = kf.kdb.Edges([path.to_itype(kf.kcl.dbu)])
         bb_edges = kf.kdb.Edges(
             [
-                kf.kdb.Edge(backbone_points[0], backbone_points[1]),
-                kf.kdb.Edge(backbone_points[-1], backbone_points[-2]),
+                kf.kdb.DEdge(backbone_points[0], backbone_points[1]).to_itype(kf.kcl.dbu),
+                kf.kdb.DEdge(backbone_points[-1], backbone_points[-2]).to_itype(kf.kcl.dbu),
             ]
         )
         border_edges = edges.interacting(bb_edges)
-        reg = kf.kdb.Region([path])
+        reg = kf.kdb.Region([path.to_itype(kf.kcl.dbu)])
         for edge in border_edges.each():
             shifted = edge.shifted(spike_length)
             shifted_center = (shifted.p1 + shifted.p2.to_v()) / 2
-            reg.insert(kf.kdb.DPolygon([edge.p1, shifted_center, edge.p2]))
+            reg.insert(kf.kdb.Polygon([edge.p1, shifted_center, edge.p2]))
         reg.merge()
 
     else:
@@ -198,8 +198,8 @@ def grating_taper_points(
         a, b, taper_length, -taper_angle / 2, taper_angle / 2, angle_step=angle_step
     )
 
-    p0 = kf.kdb.DPoint(x0, wg_width // 2)
-    p1 = kf.kdb.DPoint(x0, -wg_width // 2)
+    p0 = kf.kdb.DPoint(x0, wg_width / 2)
+    p1 = kf.kdb.DPoint(x0, -wg_width / 2)
     return [p0, p1] + taper_arc
 
 

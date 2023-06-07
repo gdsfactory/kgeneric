@@ -168,8 +168,12 @@ def grating_tooth(
         edges = kf.kdb.Edges([path.to_itype(kf.kcl.dbu)])
         bb_edges = kf.kdb.Edges(
             [
-                kf.kdb.DEdge(backbone_points[0], backbone_points[1]).to_itype(kf.kcl.dbu),
-                kf.kdb.DEdge(backbone_points[-1], backbone_points[-2]).to_itype(kf.kcl.dbu),
+                kf.kdb.DEdge(backbone_points[0], backbone_points[1]).to_itype(
+                    kf.kcl.dbu
+                ),
+                kf.kdb.DEdge(backbone_points[-1], backbone_points[-2]).to_itype(
+                    kf.kcl.dbu
+                ),
             ]
         )
         border_edges = edges.interacting(bb_edges)

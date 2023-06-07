@@ -9,36 +9,6 @@ Parametric cells
 
 
 
-GC_TE
-----------------------------------------------------
-
-.. autofunction:: kgeneric.cells.GC_TE
-
-.. plot::
-  :include-source:
-
-  import kgeneric.cells as kc
-
-  c = kc.GC_TE()
-  c.plot()
-
-
-
-GC_TM
-----------------------------------------------------
-
-.. autofunction:: kgeneric.cells.GC_TM
-
-.. plot::
-  :include-source:
-
-  import kgeneric.cells as kc
-
-  c = kc.GC_TM()
-  c.plot()
-
-
-
 bend_circular
 ----------------------------------------------------
 
@@ -95,6 +65,21 @@ coupler
   import kgeneric.cells as kc
 
   c = kc.coupler(gap=0.2, length=10.0, dy=5.0, dx=5.0, width=0.5, layer=<LAYER.WG: 0>)
+  c.plot()
+
+
+
+grating_coupler_elliptical
+----------------------------------------------------
+
+.. autofunction:: kgeneric.cells.grating_coupler_elliptical
+
+.. plot::
+  :include-source:
+
+  import kgeneric.cells as kc
+
+  c = kc.grating_coupler_elliptical(polarization='te', taper_length=16600, taper_angle=40.0, trenches_extra_angle=10.0, lambda_c=1.554, fiber_angle=15.0, grating_line_width=343, wg_width=500, neff=2.638, layer_taper=<LAYER.WG: 0>, layer_trench=<LAYER.UNDERCUT: 7>, p_start=26, n_periods=30, taper_offset=0, taper_extent_n_periods='last', clad_index=1.443)
   c.plot()
 
 

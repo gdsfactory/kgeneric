@@ -18,7 +18,7 @@ authors = [
 keywords = ["python"]
 license = {file = "LICENSE"}
 dependencies = [
-    "kfactory==0.7.5",
+    "kfactory==0.8.4",
     "scipy",
 ]
 readme = "README.md"

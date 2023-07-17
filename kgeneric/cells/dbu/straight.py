@@ -60,11 +60,17 @@ def straight(
 
     if enclosure is not None:
         enclosure.apply_minkowski_y(c, layer)
-    c.settings = {
-        "width_um": width * c.kcl.dbu,
-        "length_um": length * c.kcl.dbu,
-        "layer": layer,
-    }
+    # c._settings = KCellSettings(
+    #         "width_um": width * c.kcl.dbu,
+    #         "length_um": length * c.kcl.dbu,
+    #         "layer": layer,
+    #     }
+    # )
     c.autorename_ports()
 
     return c
+
+
+if __name__ == "__main__":
+    c = straight(width=500, length=1000, layer=0)
+    c.show()

@@ -8,6 +8,7 @@ from .gc import GC_TE, GC_TM
 from .mzi import mzi
 from .taper import taper
 from .straight import straight
+from .dbu.straight import straight as straight_dbu
 
 __all__ = [
     "bend_s",
@@ -21,4 +22,5 @@ __all__ = [
     "straight_coupler",
     "taper",
     "straight",
+    "straight_dbu",
 ]

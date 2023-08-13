@@ -1,7 +1,7 @@
 """Technology settings."""
 from __future__ import annotations
 
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple, Union
 
 from pydantic import BaseModel, Field
 
@@ -23,6 +23,9 @@ class LAYER(LayerEnum):
     WGCLAD = (111, 0)
     SLAB150 = (2, 0)
     SLAB90 = (3, 0)
+    SHALLOW_ETCH = (2, 6)
+    SHALLOWTRENCH = (5, 0)
+    DEEP_ETCH = (3, 6)
     DEEPTRENCH = (4, 0)
     GE = (5, 0)
     UNDERCUT = (6, 0)
@@ -119,13 +122,13 @@ class LayerLevel(BaseModel):
             bias: in um for the etch.
     """
 
-    layer: LayerEnum
-    thickness: float | int
+    layer: Union[Tuple[int, int], LAYER]
+    thickness: float
     thickness_tolerance: float | None = None
-    zmin: float | int
+    zmin: float
     material: str | None = None
-    sidewall_angle: float | int = 0.0
-    z_to_bias: Optional[Tuple[float, ...]] = None
+    sidewall_angle: float = 0
+    z_to_bias: list[list[float]] | None = None
     info: Dict[str, Any] = {}
 
 
@@ -142,7 +145,7 @@ class LayerStack(BaseModel):
         """Add LayerLevels automatically for subclassed LayerStacks."""
         super().__init__(**data)
 
-        for field in self.model_dump():
+        for field in self.dict():
             val = getattr(self, field)
             if isinstance(val, LayerLevel):
                 self.layers[field] = val
@@ -195,23 +198,48 @@ class LayerStack(BaseModel):
         return self.layers[key]
 
 
+class LayerStackParameters:
+    """values used by get_layer_stack and get_process."""
+
+    thickness_wg: float = 220 * nm
+    thickness_slab_deep_etch: float = 90 * nm
+    thickness_slab_shallow_etch: float = 150 * nm
+    sidewall_angle_wg: float = 10
+    thickness_clad: float = 3.0
+    thickness_nitride: float = 350 * nm
+    thickness_ge: float = 500 * nm
+    gap_silicon_to_nitride: float = 100 * nm
+    zmin_heater: float = 1.1
+    zmin_metal1: float = 1.1
+    thickness_metal1: float = 700 * nm
+    zmin_metal2: float = 2.3
+    thickness_metal2: float = 700 * nm
+    zmin_metal3: float = 3.2
+    thickness_metal3: float = 2000 * nm
+    substrate_thickness: float = 10.0
+    box_thickness: float = 3.0
+    undercut_thickness: float = 5.0
+
+
 def get_layer_stack(
-    thickness_wg=220 * nm,
-    thickness_slab_deep_etch=90 * nm,
-    thickness_clad=3.0,
-    thickness_nitride=350 * nm,
-    thickness_ge=500 * nm,
-    gap_silicon_to_nitride=100 * nm,
-    zmin_heater=1.1,
-    zmin_metal1=1.1,
-    thickness_metal1=700 * nm,
-    zmin_metal2=2.3,
-    thickness_metal2=700 * nm,
-    zmin_metal3=3.2,
-    thickness_metal3=2000 * nm,
-    substrate_thickness=10.0,
-    box_thickness=3.0,
-    undercut_thickness=5.0,
+    thickness_wg=LayerStackParameters.thickness_wg,
+    thickness_slab_deep_etch=LayerStackParameters.thickness_slab_deep_etch,
+    thickness_slab_shallow_etch=LayerStackParameters.thickness_slab_shallow_etch,
+    sidewall_angle_wg=LayerStackParameters.sidewall_angle_wg,
+    thickness_clad=LayerStackParameters.thickness_clad,
+    thickness_nitride=LayerStackParameters.thickness_nitride,
+    thickness_ge=LayerStackParameters.thickness_ge,
+    gap_silicon_to_nitride=LayerStackParameters.gap_silicon_to_nitride,
+    zmin_heater=LayerStackParameters.zmin_heater,
+    zmin_metal1=LayerStackParameters.zmin_metal1,
+    thickness_metal1=LayerStackParameters.thickness_metal1,
+    zmin_metal2=LayerStackParameters.zmin_metal2,
+    thickness_metal2=LayerStackParameters.thickness_metal2,
+    zmin_metal3=LayerStackParameters.zmin_metal3,
+    thickness_metal3=LayerStackParameters.thickness_metal3,
+    substrate_thickness=LayerStackParameters.substrate_thickness,
+    box_thickness=LayerStackParameters.box_thickness,
+    undercut_thickness=LayerStackParameters.undercut_thickness,
 ) -> LayerStack:
     """Returns generic LayerStack.
 
@@ -220,6 +248,8 @@ def get_layer_stack(
     Args:
         thickness_wg: waveguide thickness in um.
         thickness_slab_deep_etch: for deep etched slab.
+        thickness_shallow_etch: thickness for the etch in um.
+        sidewall_angle_wg: waveguide side angle.
         thickness_clad: cladding thickness in um.
         thickness_nitride: nitride thickness in um.
         thickness_ge: germanium thickness.
@@ -235,6 +265,10 @@ def get_layer_stack(
         box_thickness: bottom oxide thickness in um.
         undercut_thickness: thickness of the silicon undercut.
     """
+
+    thickness_deep_etch = thickness_wg - thickness_slab_deep_etch
+    thickness_shallow_etch = thickness_wg - thickness_slab_shallow_etch
+
     return LayerStack(
         layers=dict(
             substrate=LayerLevel(
@@ -242,23 +276,49 @@ def get_layer_stack(
                 thickness=substrate_thickness,
                 zmin=-substrate_thickness - box_thickness,
                 material="si",
-                info={"mesh_order": 99},
+                mesh_order=101,
+                background_doping={"concentration": "1E14", "ion": "Boron"},
+                orientation="100",
             ),
             box=LayerLevel(
                 layer=LAYER.WAFER,
                 thickness=box_thickness,
                 zmin=-box_thickness,
                 material="sio2",
-                info={"mesh_order": 99},
+                mesh_order=9,
             ),
             core=LayerLevel(
                 layer=LAYER.WG,
                 thickness=thickness_wg,
                 zmin=0.0,
                 material="si",
-                info={"mesh_order": 1},
-                sidewall_angle=10,
-                # width_to_z=0.5,
+                mesh_order=2,
+                sidewall_angle=sidewall_angle_wg,
+                width_to_z=0.5,
+                background_doping_concentration=1e14,
+                background_doping_ion="Boron",
+                orientation="100",
+                info={"active": True},
+            ),
+            shallow_etch=LayerLevel(
+                layer=LAYER.SHALLOW_ETCH,
+                thickness=thickness_shallow_etch,
+                zmin=0.0,
+                material="si",
+                mesh_order=1,
+                layer_type="etch",
+                into=["core"],
+                derived_layer=LAYER.SLAB150,
+            ),
+            deep_etch=LayerLevel(
+                layer=LAYER.DEEP_ETCH,
+                thickness=thickness_deep_etch,
+                zmin=0.0,
+                material="si",
+                mesh_order=1,
+                layer_type="etch",
+                into=["core"],
+                derived_layer=LAYER.SLAB90,
             ),
             clad=LayerLevel(
                 # layer=LAYER.WGCLAD,
@@ -266,96 +326,97 @@ def get_layer_stack(
                 zmin=0.0,
                 material="sio2",
                 thickness=thickness_clad,
-                info={"mesh_order": 10},
+                mesh_order=10,
             ),
             slab150=LayerLevel(
                 layer=LAYER.SLAB150,
                 thickness=150e-3,
-                zmin=0.0,
+                zmin=0,
                 material="si",
-                info={"mesh_order": 3},
+                mesh_order=3,
             ),
             slab90=LayerLevel(
                 layer=LAYER.SLAB90,
                 thickness=thickness_slab_deep_etch,
                 zmin=0.0,
                 material="si",
-                info={"mesh_order": 2},
+                mesh_order=2,
             ),
             nitride=LayerLevel(
                 layer=LAYER.WGN,
                 thickness=thickness_nitride,
                 zmin=thickness_wg + gap_silicon_to_nitride,
                 material="sin",
-                info={"mesh_order": 2},
+                mesh_order=2,
             ),
             ge=LayerLevel(
                 layer=LAYER.GE,
                 thickness=thickness_ge,
                 zmin=thickness_wg,
                 material="ge",
-                info={"mesh_order": 1},
+                mesh_order=1,
             ),
             undercut=LayerLevel(
                 layer=LAYER.UNDERCUT,
                 thickness=-undercut_thickness,
                 zmin=-box_thickness,
                 material="air",
-                # z_to_bias=tuple(
-                #     list([0, 0.3, 0.6, 0.8, 0.9, 1]),
-                #     list([-0, -0.5, -1, -1.5, -2, -2.5]),
-                # ),
-                info={"mesh_order": 1},
+                z_to_bias=[
+                    [0., 0.3, 0.6, 0.8, 0.9, 1.],
+                    [-0., -0.5, -1., -1.5, -2., -2.5],
+                ],
+                mesh_order=1,
             ),
             via_contact=LayerLevel(
                 layer=LAYER.VIAC,
                 thickness=zmin_metal1 - thickness_slab_deep_etch,
                 zmin=thickness_slab_deep_etch,
                 material="Aluminum",
-                info={"mesh_order": 1},
+                mesh_order=1,
                 sidewall_angle=-10,
+                width_to_z=0,
             ),
             metal1=LayerLevel(
                 layer=LAYER.M1,
                 thickness=thickness_metal1,
                 zmin=zmin_metal1,
                 material="Aluminum",
-                info={"mesh_order": 2},
+                mesh_order=2,
             ),
             heater=LayerLevel(
                 layer=LAYER.HEATER,
                 thickness=750e-3,
                 zmin=zmin_heater,
                 material="TiN",
-                info={"mesh_order": 1},
+                mesh_order=2,
             ),
             via1=LayerLevel(
                 layer=LAYER.VIA1,
                 thickness=zmin_metal2 - (zmin_metal1 + thickness_metal1),
                 zmin=zmin_metal1 + thickness_metal1,
                 material="Aluminum",
-                info={"mesh_order": 2},
+                mesh_order=1,
             ),
             metal2=LayerLevel(
                 layer=LAYER.M2,
                 thickness=thickness_metal2,
                 zmin=zmin_metal2,
                 material="Aluminum",
-                info={"mesh_order": 2},
+                mesh_order=2,
             ),
             via2=LayerLevel(
                 layer=LAYER.VIA2,
                 thickness=zmin_metal3 - (zmin_metal2 + thickness_metal2),
                 zmin=zmin_metal2 + thickness_metal2,
                 material="Aluminum",
-                info={"mesh_order": 1},
+                mesh_order=1,
             ),
             metal3=LayerLevel(
                 layer=LAYER.M3,
                 thickness=thickness_metal3,
                 zmin=zmin_metal3,
                 material="Aluminum",
-                info={"mesh_order": 2},
+                mesh_order=2,
             ),
         )
     )

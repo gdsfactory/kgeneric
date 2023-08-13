@@ -1,21 +1,24 @@
 from typing import Literal, Optional
+from functools import partial
 
 import numpy as np
 
 import kfactory as kf
 from kgeneric.pdk import LAYER
 
+nm = 1e-3
+
 
 @kf.cell
 def grating_coupler_elliptical(
     polarization: Literal["te"] | Literal["tm"] = "te",
-    taper_length: int = 16600,
+    taper_length: float = 16.6,
     taper_angle: float = 40.0,
     trenches_extra_angle: float = 10.0,
     lambda_c: float = 1.554,
     fiber_angle: float = 15.0,
-    grating_line_width: int = 343,
-    wg_width: int = 500,
+    grating_line_width: float = 0.343,
+    wg_width: float = 500 * nm,
     neff: float = 2.638,  # tooth effective index
     layer_taper: Optional[LAYER] = LAYER.WG,
     layer_trench: LAYER = LAYER.UNDERCUT,
@@ -25,33 +28,53 @@ def grating_coupler_elliptical(
     taper_extent_n_periods: float | Literal["first"] | Literal["last"] = "last",
     period: Optional[int] = None,
     x_fiber_launch: Optional[int] = None,
+    clad_index: float = 1.443,  # cladding index
 ) -> kf.KCell:
-    DEG2RAD = np.pi / 180
+    """Returns elliptical grating coupler.
 
-    # Define some constants
-    nc = 1.443  # cladding index
-    # Compute some ellipse parameters
+    Args:
+        polarization: te or tm
+        taper_length: int = 16600,
+        taper_angle: in degrees.
+        trenches_extra_angle: in degrees.
+        lambda_c: wavelength.
+        fiber_angle:in degrees.
+        grating_line_width: int = 343,
+        wg_width: int = 500,
+        neff: float = 2.638,  # tooth effective index
+        layer_taper: Optional[LAYER] = LAYER.WG,
+        layer_trench: LAYER = LAYER.UNDERCUT,
+        p_start: int = 26,
+        n_periods: int = 30,
+        taper_offset: int = 0,
+        taper_extent_n_periods: float | Literal["first"] | Literal["last"] = "last",
+        period: Optional[int] = None,
+        x_fiber_launch: fiber launching position.
+        clad_index: cladding index.
+
+    """
+    DEG2RAD = np.pi / 180
     sthc = np.sin(fiber_angle * DEG2RAD)
 
     if period is not None:
-        neff = lambda_c / period + nc * sthc
+        neff = lambda_c / period + clad_index * sthc
 
-    d = neff**2 - nc**2 * sthc**2
+    d = neff**2 - clad_index**2 * sthc**2
     a1 = lambda_c * neff / d
     b1 = lambda_c / np.sqrt(d)
-    x1 = lambda_c * nc * sthc / d
+    x1 = lambda_c * clad_index * sthc / d
 
-    a1 = round(a1 * 1e3)
-    b1 = round(b1 * 1e3)
-    x1 = round(x1 * 1e3)
+    # a1 = round(a1 * 1e3)
+    # b1 = round(b1 * 1e3)
+    # x1 = round(x1 * 1e3)
 
     _period = a1 + x1
 
     trench_line_width = _period - grating_line_width
 
     c = kf.KCell()
-    c.settings["polarization"] = polarization
-    c.settings["wavelength"] = lambda_c * 1e3
+    # c.settings["polarization"] = polarization
+    # c.settings["wavelength"] = lambda_c * 1e3
 
     # Make each grating line
 
@@ -76,7 +99,7 @@ def grating_coupler_elliptical(
 
     def _get_taper_pts(
         n_periods_over_grating: float,
-    ) -> tuple[list[kf.kdb.Point], float]:
+    ) -> tuple[list[kf.kdb.DPoint], float]:
         p_taper = p_start + n_periods_over_grating
         _taper_length = taper_length + (n_periods_over_grating - 1) * _period
 
@@ -98,7 +121,7 @@ def grating_coupler_elliptical(
     taper_pts, x_output = _get_taper_pts(n_periods_over_grating=n_periods_over_grating)
     if layer_taper is not None:
         c.shapes(layer_taper).insert(
-            kf.kdb.Polygon(taper_pts).transformed(kf.kdb.Trans(taper_offset, 0))
+            kf.kdb.DPolygon(taper_pts).transformed(kf.kdb.Trans(taper_offset, 0))
         )
         c.create_port(
             name="W0", trans=kf.kdb.Trans.R180, width=wg_width, layer=layer_taper
@@ -107,8 +130,7 @@ def grating_coupler_elliptical(
     c.transform(kf.kdb.Trans(int(-x_output - taper_offset), 0))
 
     # Add port
-    c.settings["period"] = _period
-    # setattr(c.ports["W0"], "polarization", polarization)
+    # c.settings["period"] = _period
 
     # Add GC Fibre launch reference port, we are putting it at the same place
     # as the other I/O port for now
@@ -122,11 +144,8 @@ def grating_coupler_elliptical(
         width=100,
         port_type="fibre_launch",
     )
-    # setattr(c.ports["FL"], "polarization", polarization)
-
     y0 = 0
     c.p0_overclad = x0, y0
-
     return c
 
 
@@ -145,16 +164,20 @@ def grating_tooth(
     backbone_points = ellipse_arc(ap, bp, xp, angle_min, angle_max, angle_step)
     if spiked:
         spike_length = width // 3
-        path = kf.kdb.Path(backbone_points, width).polygon()
-        edges = kf.kdb.Edges([path])
+        path = kf.kdb.DPath(backbone_points, width).polygon()
+        edges = kf.kdb.Edges([path.to_itype(kf.kcl.dbu)])
         bb_edges = kf.kdb.Edges(
             [
-                kf.kdb.Edge(backbone_points[0], backbone_points[1]),
-                kf.kdb.Edge(backbone_points[-1], backbone_points[-2]),
+                kf.kdb.DEdge(backbone_points[0], backbone_points[1]).to_itype(
+                    kf.kcl.dbu
+                ),
+                kf.kdb.DEdge(backbone_points[-1], backbone_points[-2]).to_itype(
+                    kf.kcl.dbu
+                ),
             ]
         )
         border_edges = edges.interacting(bb_edges)
-        reg = kf.kdb.Region([path])
+        reg = kf.kdb.Region([path.to_itype(kf.kcl.dbu)])
         for edge in border_edges.each():
             shifted = edge.shifted(spike_length)
             shifted_center = (shifted.p1 + shifted.p2.to_v()) / 2
@@ -163,14 +186,6 @@ def grating_tooth(
 
     else:
         reg = kf.kdb.Region(kf.kdb.Path(backbone_points, width))
-
-    # points = extrude_path(
-    #     backbone_points,
-    #     width,
-    #     with_manhattan_facing_angles=False,
-    #     spike_length=spike_length,
-    # )
-
     return reg
 
 
@@ -178,36 +193,63 @@ def grating_taper_points(
     a: float,
     b: float,
     x0: int,
-    taper_length: int,
+    taper_length: float,
     taper_angle: float,
-    wg_width: int,
+    wg_width: float,
     angle_step: float = 1.0,
 ) -> list[kf.kdb.Point]:
-    taper_arc = ellipse_arc(a, b, taper_length, -taper_angle / 2, taper_angle / 2)
+    taper_arc = ellipse_arc(
+        a, b, taper_length, -taper_angle / 2, taper_angle / 2, angle_step=angle_step
+    )
 
-    p0 = kf.kdb.Point(x0, wg_width // 2)
-    p1 = kf.kdb.Point(x0, -wg_width // 2)
-
-    # port_position = np.array((x0, 0))
-    # p0 = port_position + (0, wg_width / 2)
-    # p1 = port_position + (0, -wg_width / 2)
-    # points = np.vstack([p0, p1, taper_arc])
+    p0 = kf.kdb.DPoint(x0, wg_width / 2)
+    p1 = kf.kdb.DPoint(x0, -wg_width / 2)
     return [p0, p1] + taper_arc
 
 
 def ellipse_arc(
     a: float,
     b: float,
-    x0: int,
+    x0: float,
     angle_min: float,
     angle_max: float,
     angle_step: float = 0.5,
-) -> list[kf.kdb.Point]:
+) -> list[kf.kdb.DPoint]:
     angle = np.arange(angle_min, angle_max + angle_step, angle_step) * np.pi / 180
     xs = a * np.cos(angle) + x0
     ys = b * np.sin(angle)
-    return [kf.kdb.Point(x, y) for x, y in zip(xs, ys)]  # np.column_stack([xs, ys])
+    return [kf.kdb.DPoint(x, y) for x, y in zip(xs, ys)]  # np.column_stack([xs, ys])
 
+
+grating_coupler_elliptical_te = partial(
+    grating_coupler_elliptical,
+    polarization="te",
+    taper_length=16.6,
+    taper_angle=40,
+    lambda_c=1.554,
+    fiber_angle=15,
+    grating_line_width=343,
+    wg_width=500,
+    p_start=26,
+    n_periods=30,
+    taper_offset=-30,
+    x_fiber_launch=None,
+)
+
+grating_coupler_elliptical_tm = partial(
+    grating_coupler_elliptical,
+    polarization="tm",
+    taper_length=17,
+    taper_angle=40.0,
+    lambda_c=1.58,
+    fiber_angle=15.0,
+    grating_line_width=550,
+    wg_width=500,
+    p_start=17,
+    n_periods=20,
+    neff=1.8,
+    taper_offset=-325,
+)
 
 if __name__ == "__main__":
     c = grating_coupler_elliptical()

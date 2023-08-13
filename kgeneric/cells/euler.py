@@ -220,8 +220,6 @@ def bend_euler(
         )
 
     c.info["sim"] = "FDTD"
-    c.info["radius"] = radius
-    c.autorename_ports()
     return c
 
 

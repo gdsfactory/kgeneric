@@ -73,8 +73,8 @@ def grating_coupler_elliptical(
     trench_line_width = _period - grating_line_width
 
     c = kf.KCell()
-    # c.settings["polarization"] = polarization
-    # c.settings["wavelength"] = lambda_c * 1e3
+    c.info["polarization"] = polarization
+    c.info["wavelength"] = lambda_c * 1e3
 
     # Make each grating line
 
@@ -130,7 +130,7 @@ def grating_coupler_elliptical(
     c.transform(kf.kdb.Trans(int(-x_output - taper_offset), 0))
 
     # Add port
-    # c.settings["period"] = _period
+    c.info["period"] = _period
 
     # Add GC Fibre launch reference port, we are putting it at the same place
     # as the other I/O port for now

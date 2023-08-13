@@ -60,7 +60,7 @@ def straight(
 
     if enclosure is not None:
         enclosure.apply_minkowski_y(c, layer)
-    c.settings = {
+    c.info = {
         "width_um": width * c.kcl.dbu,
         "length_um": length * c.kcl.dbu,
         "layer": layer,

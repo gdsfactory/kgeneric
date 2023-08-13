@@ -1,8 +1,4 @@
-r"""Tapers, linear only.
-
-TODO: Non-linear tapers.
-
-"""
+"""linear tapers."""
 
 
 from kfactory import KCell, LayerEnum, kcl
@@ -22,7 +18,7 @@ def taper(
 ) -> KCell:
     r"""Linear Taper [um].
 
-    Visualization::
+    code::
 
                __
              _/  │ Slab/Exclude

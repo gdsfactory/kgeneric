@@ -2,7 +2,9 @@
 
 import inspect
 import pathlib
+
 from kfactory.kcell import clean_value
+
 from kgeneric import cells_dict as cells
 
 filepath = pathlib.Path(__file__).parent.absolute() / "cells.py"
@@ -50,7 +52,7 @@ import kgeneric as kg
             [
                 f"{p}={repr(clean_value(sig.parameters[p].default))}"
                 for p in sig.parameters
-                if isinstance(sig.parameters[p].default, (int, float, str, tuple))
+                if isinstance(sig.parameters[p].default, int | float | str | tuple)
                 and p not in skip_settings
             ]
         )

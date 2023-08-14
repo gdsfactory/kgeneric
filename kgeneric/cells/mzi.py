@@ -1,5 +1,6 @@
+from collections.abc import Callable
 from functools import partial
-from typing import Any, Callable, Optional
+from typing import Any
 
 import kfactory as kf
 from kfactory import cell
@@ -8,8 +9,8 @@ from kfactory.routing.optical import route
 from kfactory.typings import CellSpec
 from kfactory.utils.enclosure import LayerEnclosure
 
-from kgeneric.cells.dbu.straight import straight as straight_dbu
 from kgeneric.cells.coupler import coupler
+from kgeneric.cells.dbu.straight import straight as straight_dbu
 from kgeneric.cells.euler import bend_euler
 from kgeneric.cells.straight import straight as straight_function
 
@@ -18,14 +19,14 @@ from kgeneric.cells.straight import straight as straight_function
 def mzi(
     delta_length: float = 10.0,
     length_y: float = 2.0,
-    length_x: Optional[float] = 0.1,
+    length_x: float | None = 0.1,
     bend: Callable[..., kf.KCell] = bend_euler,
     straight: CellSpec = straight_function,
-    straight_y: Optional[CellSpec] = None,
-    straight_x_top: Optional[CellSpec] = None,
-    straight_x_bot: Optional[CellSpec] = None,
+    straight_y: CellSpec | None = None,
+    straight_x_top: CellSpec | None = None,
+    straight_x_bot: CellSpec | None = None,
     splitter: CellSpec = coupler,
-    combiner: Optional[CellSpec] = None,
+    combiner: CellSpec | None = None,
     with_splitter: bool = True,
     port_e1_splitter: str = "o3",
     port_e0_splitter: str = "o4",
@@ -33,7 +34,7 @@ def mzi(
     width: float = 1.0,
     layer: int | LayerEnum = 0,
     radius: float = 5.0,
-    enclosure: Optional[LayerEnclosure] = None,
+    enclosure: LayerEnclosure | None = None,
     **kwargs: Any,
 ) -> kf.KCell:
     """Mzi.
@@ -220,8 +221,8 @@ def mzi(
 
 
 if __name__ == "__main__":
-    from kgeneric.layers import LAYER
     from kgeneric import pdk
+    from kgeneric.layers import LAYER
 
     um = 1 / pdk.kcl.dbu
     enclosure = LayerEnclosure(

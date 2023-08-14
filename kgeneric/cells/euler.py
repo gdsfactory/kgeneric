@@ -6,13 +6,11 @@ end.
 """
 
 import numpy as np
-from scipy.optimize import brentq  # type: ignore[import]
-from scipy.special import fresnel  # type: ignore[import]
-
 from kfactory import kdb
 from kfactory.kcell import KCell, LayerEnum, cell
-from kfactory.utils.enclosure import LayerEnclosure
-from kfactory.utils.enclosure import extrude_path
+from kfactory.utils.enclosure import LayerEnclosure, extrude_path
+from scipy.optimize import brentq  # type: ignore[import]
+from scipy.special import fresnel  # type: ignore[import]
 
 __all__ = [
     "euler_bend_points",

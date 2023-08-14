@@ -4,11 +4,9 @@ from collections.abc import Sequence
 
 import numpy as np
 import numpy.typing as nty
-from scipy.special import binom  # type: ignore[import]
-
 from kfactory import KCell, LayerEnum, cell, kdb
-from kfactory.utils.enclosure import LayerEnclosure
-from kfactory.utils.enclosure import extrude_path
+from kfactory.utils.enclosure import LayerEnclosure, extrude_path
+from scipy.special import binom  # type: ignore[import]
 
 __all__ = ["bend_s"]
 
@@ -93,8 +91,8 @@ def bend_s(
 
 
 if __name__ == "__main__":
-    from kgeneric.pdk import LAYER
     from kgeneric import pdk
+    from kgeneric.pdk import LAYER
 
     um = 1 / pdk.kcl.dbu
     enclosure = LayerEnclosure(

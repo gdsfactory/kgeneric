@@ -1,9 +1,9 @@
-from typing import Literal, Optional
 from functools import partial
-
-import numpy as np
+from typing import Literal
 
 import kfactory as kf
+import numpy as np
+
 from kgeneric.layers import LAYER
 
 nm = 1e-3
@@ -20,14 +20,14 @@ def grating_coupler_elliptical(
     grating_line_width: float = 0.343,
     wg_width: float = 500 * nm,
     neff: float = 2.638,  # tooth effective index
-    layer_taper: Optional[LAYER] = LAYER.WG,
+    layer_taper: LAYER | None = LAYER.WG,
     layer_trench: LAYER = LAYER.UNDERCUT,
     p_start: int = 26,
     n_periods: int = 30,
     taper_offset: int = 0,
     taper_extent_n_periods: float | Literal["first"] | Literal["last"] = "last",
-    period: Optional[int] = None,
-    x_fiber_launch: Optional[int] = None,
+    period: int | None = None,
+    x_fiber_launch: int | None = None,
     clad_index: float = 1.443,  # cladding index
 ) -> kf.KCell:
     """Returns elliptical grating coupler.

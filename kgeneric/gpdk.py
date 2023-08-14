@@ -1,10 +1,11 @@
 """ Example on how to build a generic PDK."""
+from functools import partial
+
 import kfactory as kf
 
-from functools import partial
-from kgeneric.tech import TECH
 from kgeneric import cells
 from kgeneric.layers import LAYER
+from kgeneric.tech import TECH
 
 enclosure_sc = kf.utils.LayerEnclosure(name="WGSTD", sections=[(LAYER.WGCLAD, 0, 2000)])
 

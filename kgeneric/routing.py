@@ -1,6 +1,7 @@
 from functools import partial
 
 import kfactory as kf
+
 from kgeneric import gpdk
 
 route_sc = partial(

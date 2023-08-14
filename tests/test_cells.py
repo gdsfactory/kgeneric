@@ -1,9 +1,8 @@
-from functools import partial
 import pathlib
-import pytest
 
-from kfactory import kdb
 import kfactory as kf
+import pytest
+from kfactory import kdb
 from kfactory.conf import logger
 
 from kgeneric import cells_dict

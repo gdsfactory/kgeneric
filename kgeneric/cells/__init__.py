@@ -23,5 +23,5 @@ __all__ = [
     "straight_dbu",
     "straight_coupler",
     "taper",
-    'taper_dbu'
+    "taper_dbu",
 ]

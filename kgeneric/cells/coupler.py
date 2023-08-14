@@ -6,7 +6,7 @@ from kfactory.kcell import LayerEnum
 
 from kfactory.utils.enclosure import LayerEnclosure
 
-from kgeneric.pdk import LAYER
+from kgeneric.layers import LAYER
 from kgeneric.cells.bezier import bend_s
 from kgeneric.cells.straight import straight
 
@@ -22,6 +22,7 @@ def coupler(
     enclosure: LayerEnclosure = LayerEnclosure(),
 ) -> KCell:
     r"""Symmetric coupler.
+
     Args:
         gap: between straights in um.
         length: of coupling region in um.
@@ -29,6 +30,7 @@ def coupler(
         dx: length of bend in x direction in um.
         layer: layer number or name.
         enclosure: straight enclosure.
+
     .. code::
                dx                                 dx
             |------|                           |------|

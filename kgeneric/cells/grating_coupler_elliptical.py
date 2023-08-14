@@ -4,7 +4,7 @@ from functools import partial
 import numpy as np
 
 import kfactory as kf
-from kgeneric.pdk import LAYER
+from kgeneric.layers import LAYER
 
 nm = 1e-3
 

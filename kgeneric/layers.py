@@ -1,7 +1,7 @@
 """Technology settings."""
 from __future__ import annotations
 
-from typing import Any, Dict, Optional, Tuple, Union
+from typing import Any, Dict, Tuple, Union
 
 from pydantic import BaseModel, Field
 
@@ -127,7 +127,7 @@ class LayerLevel(BaseModel):
     thickness_tolerance: float | None = None
     zmin: float
     material: str | None = None
-    sidewall_angle: float = 0
+    sidewall_angle: float = 0.
     z_to_bias: list[list[float]] | None = None
     info: Dict[str, Any] = {}
 
@@ -204,7 +204,7 @@ class LayerStackParameters:
     thickness_wg: float = 220 * nm
     thickness_slab_deep_etch: float = 90 * nm
     thickness_slab_shallow_etch: float = 150 * nm
-    sidewall_angle_wg: float = 10
+    sidewall_angle_wg: float = 10.
     thickness_clad: float = 3.0
     thickness_nitride: float = 350 * nm
     thickness_ge: float = 500 * nm
@@ -373,7 +373,7 @@ def get_layer_stack(
                 zmin=thickness_slab_deep_etch,
                 material="Aluminum",
                 mesh_order=1,
-                sidewall_angle=-10,
+                sidewall_angle=-10.,
                 width_to_z=0,
             ),
             metal1=LayerLevel(

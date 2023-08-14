@@ -19,7 +19,7 @@ def mzi(
     delta_length: float = 10.0,
     length_y: float = 2.0,
     length_x: Optional[float] = 0.1,
-    bend_component: Callable[..., kf.KCell] = bend_euler,
+    bend: Callable[..., kf.KCell] = bend_euler,
     straight: CellSpec = straight_function,
     straight_y: Optional[CellSpec] = None,
     straight_x_top: Optional[CellSpec] = None,
@@ -37,6 +37,7 @@ def mzi(
     **kwargs: Any,
 ) -> kf.KCell:
     """Mzi.
+
     Args:
         delta_length: bottom arm vertical extra length.
         length_y: vertical length for both and top arms.
@@ -97,7 +98,7 @@ def mzi(
         "radius": radius,
         "enclosure": enclosure,
     }
-    bend = kf.kcl.pdk.get_cell(bend_component, **bend_settings)
+    bend = kf.kcl.pdk.get_cell(bend, **bend_settings)
     c = kf.KCell()
     straight_connect = partial(straight_dbu, layer=layer, enclosure=enclosure)
     combiner_settings = {
@@ -219,7 +220,7 @@ def mzi(
 
 
 if __name__ == "__main__":
-    from kgeneric.pdk import LAYER
+    from kgeneric.layers import LAYER
     from kgeneric import pdk
 
     um = 1 / pdk.kcl.dbu

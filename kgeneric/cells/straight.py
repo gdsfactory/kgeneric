@@ -55,7 +55,7 @@ def straight(
 
 
 if __name__ == "__main__":
-    from kgeneric.pdk import LAYER
+    from kgeneric.layers import LAYER
 
     c = straight(width=1, length=10, layer=LAYER.WG)
     c.show()

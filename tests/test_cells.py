@@ -6,8 +6,7 @@ from kfactory import kdb
 import kfactory as kf
 from kfactory.conf import logger
 
-from kgeneric import cells
-from kgeneric.pdk import LAYER
+from kgeneric import cells_dict
 
 
 class GeometryDifference(ValueError):
@@ -16,91 +15,7 @@ class GeometryDifference(ValueError):
     pass
 
 
-wg_enc = kf.utils.LayerEnclosure(name="WGSTD", sections=[(LAYER.WGCLAD, 0, 2000)])
-
-straight = partial(
-    cells.straight, width=0.5, length=1, layer=LAYER.WG, enclosure=wg_enc
-)
-
-bend90 = partial(
-    cells.circular.bend_circular,
-    width=1,
-    radius=10,
-    layer=LAYER.WG,
-    enclosure=wg_enc,
-    angle=90,
-)
-
-
-bend180 = partial(
-    cells.circular.bend_circular,
-    width=1,
-    radius=10,
-    layer=LAYER.WG,
-    enclosure=wg_enc,
-    angle=180,
-)
-
-
-bend90_euler = partial(
-    cells.euler.bend_euler,
-    width=1,
-    radius=10,
-    layer=LAYER.WG,
-    enclosure=wg_enc,
-    angle=90,
-)
-
-
-bend180_euler = partial(
-    cells.euler.bend_euler,
-    width=1,
-    radius=10,
-    layer=LAYER.WG,
-    enclosure=wg_enc,
-    angle=180,
-)
-
-coupler = cells.coupler
-straight_coupler = cells.straight_coupler
-
-grating_coupler_elliptical = cells.grating_coupler_elliptical
-
-taper = partial(
-    cells.taper,
-    width1=0.5,
-    width2=1,
-    length=10,
-    layer=LAYER.WG,
-    enclosure=wg_enc,
-)
-
-bend_s_euler = partial(
-    cells.bend_s_euler,
-    offset=0,
-    width=0.5,
-    radius=5,
-    layer=LAYER.WG,
-    enclosure=wg_enc,
-)
-
-mzi = cells.mzi
-straight_coupler = cells.straight_coupler
-
-
-cell_factories = dict(
-    bend_circular=bend90,
-    bend_euler=bend90_euler,
-    bend_s_euler=bend_s_euler,
-    coupler=coupler,
-    grating_coupler_elliptical=grating_coupler_elliptical,
-    straight_coupler=straight_coupler,
-    mzi=mzi,
-    taper=taper,
-    straight=straight,
-)
-
-cell_names = set(cell_factories.keys())
+cell_names = set(cells_dict.keys())
 
 
 @pytest.fixture(params=cell_names, scope="function")
@@ -112,7 +27,7 @@ def cell_name(request):
 def test_cells(cell_name: str) -> None:
     """Ensure cells have the same geometry as their golden references."""
     gds_ref = pathlib.Path(__file__).parent / "gds" / "gds_ref"
-    cell = cell_factories[cell_name]()
+    cell = cells_dict[cell_name]()
     ref_file = gds_ref / f"{cell.name}.gds"
     run_cell = cell
     if not ref_file.exists():

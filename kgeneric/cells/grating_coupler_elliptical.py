@@ -162,31 +162,33 @@ def grating_tooth(
     angle_max = taper_angle / 2
 
     backbone_points = ellipse_arc(ap, bp, xp, angle_min, angle_max, angle_step)
-    if spiked:
-        spike_length = width // 3
-        path = kf.kdb.DPath(backbone_points, width).polygon()
-        edges = kf.kdb.Edges([path.to_itype(kf.kcl.dbu)])
-        bb_edges = kf.kdb.Edges(
-            [
-                kf.kdb.DEdge(backbone_points[0], backbone_points[1]).to_itype(
-                    kf.kcl.dbu
-                ),
-                kf.kdb.DEdge(backbone_points[-1], backbone_points[-2]).to_itype(
-                    kf.kcl.dbu
-                ),
-            ]
-        )
-        border_edges = edges.interacting(bb_edges)
-        reg = kf.kdb.Region([path.to_itype(kf.kcl.dbu)])
-        for edge in border_edges.each():
-            shifted = edge.shifted(spike_length)
-            shifted_center = (shifted.p1 + shifted.p2.to_v()) / 2
-            reg.insert(kf.kdb.Polygon([edge.p1, shifted_center, edge.p2]))
-        reg.merge()
+    return (
+        _extracted_from_grating_tooth_15(width, backbone_points)
+        if spiked
+        else kf.kdb.Region(kf.kdb.Path(backbone_points, width))
+    )
 
-    else:
-        reg = kf.kdb.Region(kf.kdb.Path(backbone_points, width))
-    return reg
+
+# TODO Rename this here and in `grating_tooth`
+def _extracted_from_grating_tooth_15(width, backbone_points):
+    spike_length = width // 3
+    path = kf.kdb.DPath(backbone_points, width).polygon()
+    edges = kf.kdb.Edges([path.to_itype(kf.kcl.dbu)])
+    bb_edges = kf.kdb.Edges(
+        [
+            kf.kdb.DEdge(backbone_points[0], backbone_points[1]).to_itype(kf.kcl.dbu),
+            kf.kdb.DEdge(backbone_points[-1], backbone_points[-2]).to_itype(kf.kcl.dbu),
+        ]
+    )
+    border_edges = edges.interacting(bb_edges)
+    result = kf.kdb.Region([path.to_itype(kf.kcl.dbu)])
+    for edge in border_edges.each():
+        shifted = edge.shifted(spike_length)
+        shifted_center = (shifted.p1 + shifted.p2.to_v()) / 2
+        result.insert(kf.kdb.Polygon([edge.p1, shifted_center, edge.p2]))
+    result.merge()
+
+    return result
 
 
 def grating_taper_points(

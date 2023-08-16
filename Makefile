@@ -1,10 +1,8 @@
 install:
-	pip install -e .[dev]
-	pre-commit install
-
-dev:
 	pip install -e .[dev,docs]
 	pip install git+https://github.com/gdsfactory/kfactory.git
+
+dev: install
 
 test:
 	pytest -s
@@ -33,7 +31,6 @@ update-pre:
 git-rm-merged:
 	git branch -D `git branch --merged | grep -v \* | xargs`
 
-
 release:
 	git push
 	git push origin --tags
@@ -42,12 +39,6 @@ build:
 	rm -rf dist
 	pip install build
 	python -m build
-
-jupytext:
-	jupytext docs/**/*.ipynb --to py
-
-notebooks:
-	jupytext docs/**/*.py --to ipynb
 
 docs:
 	jb build docs

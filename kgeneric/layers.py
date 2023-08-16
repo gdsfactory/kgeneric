@@ -1,11 +1,10 @@
 """Technology settings."""
 from __future__ import annotations
 
-from typing import Any, Dict, Optional, Tuple, Union
-
-from pydantic import BaseModel, Field
+from typing import Any
 
 from kfactory.kcell import LayerEnum
+from pydantic import BaseModel, Field
 
 nm = 1e-3
 
@@ -122,14 +121,14 @@ class LayerLevel(BaseModel):
             bias: in um for the etch.
     """
 
-    layer: Union[Tuple[int, int], LAYER]
+    layer: tuple[int, int] | LAYER
     thickness: float
     thickness_tolerance: float | None = None
     zmin: float
     material: str | None = None
-    sidewall_angle: float = 0
+    sidewall_angle: float = 0.0
     z_to_bias: list[list[float]] | None = None
-    info: Dict[str, Any] = {}
+    info: dict[str, Any] = {}
 
 
 class LayerStack(BaseModel):
@@ -139,7 +138,7 @@ class LayerStack(BaseModel):
         layers: dict of layer_levels.
     """
 
-    layers: Dict[str, LayerLevel] = Field(default_factory=dict)
+    layers: dict[str, LayerLevel] = Field(default_factory=dict)
 
     def __init__(self, **data: Any):
         """Add LayerLevels automatically for subclassed LayerStacks."""
@@ -152,7 +151,7 @@ class LayerStack(BaseModel):
                 if isinstance(val.layer, LAYER):
                     self.layers[field].layer = (val.layer[0], val.layer[1])
 
-    def get_layer_to_thickness(self) -> Dict[Tuple[int, int] | LAYER, float]:
+    def get_layer_to_thickness(self) -> dict[tuple[int, int] | LAYER, float]:
         """Returns layer tuple to thickness (um)."""
         return {
             level.layer: level.thickness
@@ -160,13 +159,13 @@ class LayerStack(BaseModel):
             if level.thickness
         }
 
-    def get_layer_to_zmin(self) -> Dict[Tuple[int, int] | LAYER, float]:
+    def get_layer_to_zmin(self) -> dict[tuple[int, int] | LAYER, float]:
         """Returns layer tuple to z min position (um)."""
         return {
             level.layer: level.zmin for level in self.layers.values() if level.thickness
         }
 
-    def get_layer_to_material(self) -> Dict[Tuple[int, int] | LAYER, str]:
+    def get_layer_to_material(self) -> dict[tuple[int, int] | LAYER, str]:
         """Returns layer tuple to material name."""
         return {
             level.layer: level.material
@@ -174,7 +173,7 @@ class LayerStack(BaseModel):
             if level.thickness and level.material
         }
 
-    def get_layer_to_sidewall_angle(self) -> Dict[Tuple[int, int] | LAYER, float]:
+    def get_layer_to_sidewall_angle(self) -> dict[tuple[int, int] | LAYER, float]:
         """Returns layer tuple to material name."""
         return {
             level.layer: level.sidewall_angle
@@ -182,11 +181,11 @@ class LayerStack(BaseModel):
             if level.thickness
         }
 
-    def get_layer_to_info(self) -> Dict[Tuple[int, int] | LAYER, Dict[str, Any]]:
+    def get_layer_to_info(self) -> dict[tuple[int, int] | LAYER, dict[str, Any]]:
         """Returns layer tuple to info dict."""
         return {level.layer: level.info for level in self.layers.values()}
 
-    def to_dict(self) -> Dict[str, Dict[str, Any]]:
+    def to_dict(self) -> dict[str, dict[str, Any]]:
         return {level_name: dict(level) for level_name, level in self.layers.items()}
 
     def __getitem__(self, key: str) -> LayerLevel:
@@ -204,7 +203,7 @@ class LayerStackParameters:
     thickness_wg: float = 220 * nm
     thickness_slab_deep_etch: float = 90 * nm
     thickness_slab_shallow_etch: float = 150 * nm
-    sidewall_angle_wg: float = 10
+    sidewall_angle_wg: float = 10.0
     thickness_clad: float = 3.0
     thickness_nitride: float = 350 * nm
     thickness_ge: float = 500 * nm
@@ -362,8 +361,8 @@ def get_layer_stack(
                 zmin=-box_thickness,
                 material="air",
                 z_to_bias=[
-                    [0., 0.3, 0.6, 0.8, 0.9, 1.],
-                    [-0., -0.5, -1., -1.5, -2., -2.5],
+                    [0.0, 0.3, 0.6, 0.8, 0.9, 1.0],
+                    [-0.0, -0.5, -1.0, -1.5, -2.0, -2.5],
                 ],
                 mesh_order=1,
             ),
@@ -373,7 +372,7 @@ def get_layer_stack(
                 zmin=thickness_slab_deep_etch,
                 material="Aluminum",
                 mesh_order=1,
-                sidewall_angle=-10,
+                sidewall_angle=-10.0,
                 width_to_z=0,
             ),
             metal1=LayerLevel(

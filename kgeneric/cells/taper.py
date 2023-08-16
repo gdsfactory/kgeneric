@@ -22,7 +22,7 @@ def taper(
 ) -> KCell:
     r"""Linear Taper [um].
 
-    Visualization::
+    .. code::
 
                __
              _/  │ Slab/Exclude

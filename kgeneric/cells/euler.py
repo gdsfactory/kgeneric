@@ -6,13 +6,11 @@ end.
 """
 
 import numpy as np
-from scipy.optimize import brentq  # type: ignore[import]
-from scipy.special import fresnel  # type: ignore[import]
-
 from kfactory import kdb
 from kfactory.kcell import KCell, LayerEnum, cell
-from kfactory.utils.enclosure import LayerEnclosure
-from kfactory.utils.enclosure import extrude_path
+from kfactory.utils.enclosure import LayerEnclosure, extrude_path
+from scipy.optimize import brentq  # type: ignore[import]
+from scipy.special import fresnel  # type: ignore[import]
 
 __all__ = [
     "euler_bend_points",
@@ -192,34 +190,19 @@ def bend_euler(
         end_angle=angle,
     )
 
-    if angle == 90:
-        c.create_port(
-            name="W0",
-            layer=layer,
-            width=int(width / c.kcl.dbu),
-            trans=kdb.Trans(2, False, backbone[0].to_itype(dbu).to_v()),
-        )
-        c.create_port(
-            name="N0",
-            layer=layer,
-            width=int(width / c.kcl.dbu),
-            trans=kdb.Trans(1, False, backbone[-1].to_itype(dbu).to_v()),
-        )
-    elif angle == 180:
-        c.create_port(
-            name="W0",
-            layer=layer,
-            width=int(width / c.kcl.dbu),
-            trans=kdb.Trans(2, False, backbone[0].to_itype(dbu).to_v()),
-        )
-        c.create_port(
-            name="W1",
-            layer=layer,
-            width=int(width / c.kcl.dbu),
-            trans=kdb.Trans(2, False, backbone[-1].to_itype(dbu).to_v()),
-        )
+    c.create_port(
+        layer=layer,
+        width=int(width / c.kcl.dbu),
+        trans=kdb.Trans(2, False, backbone[0].to_itype(dbu).to_v()),
+    )
 
-    c.info["sim"] = "FDTD"
+    c.create_port(
+        dcplx_trans=kdb.DCplxTrans(1, angle, False, backbone[-1].to_v()),
+        dwidth=width,
+        layer=layer,
+    )
+
+    c.autorename_ports()
     return c
 
 

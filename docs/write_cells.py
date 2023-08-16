@@ -1,9 +1,10 @@
 import inspect
 import pathlib
+
 import numpy as np
+from kfactory.kcell import Any, Callable, KCell, LayerEnum, clean_name
+
 from kgeneric.tests.test_cells import cell_factories as cells
-from kfactory.kcell import KCell, Any, clean_name, Callable
-from kfactory.kcell import LayerEnum
 
 
 def dict2name(prefix: str = "", **kwargs) -> str:
@@ -34,7 +35,7 @@ def clean_value_json(
             return value.name
         elif type(value) in [float, np.float64]:  # float
             return np.round(value, 3)
-        elif isinstance(value, (tuple, list)):
+        elif isinstance(value, tuple | list):
             return value
         elif isinstance(value, dict):
             return dict2name(**value)
@@ -78,7 +79,7 @@ Parametric cells
             [
                 f"{p}={repr(clean_value_json(sig.parameters[p].default))}"
                 for p in sig.parameters
-                if isinstance(sig.parameters[p].default, (int, float, str, tuple))
+                if isinstance(sig.parameters[p].default, int | float | str | tuple)
                 and p not in skip_settings
             ]
         )

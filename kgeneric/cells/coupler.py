@@ -1,14 +1,10 @@
-from typing import Union
-
 from kfactory import KCell, cell, kdb
-
 from kfactory.kcell import LayerEnum
-
 from kfactory.utils.enclosure import LayerEnclosure
 
-from kgeneric.pdk import LAYER
 from kgeneric.cells.bezier import bend_s
 from kgeneric.cells.straight import straight
+from kgeneric.layers import LAYER
 
 
 @cell
@@ -18,10 +14,11 @@ def coupler(
     dy: float = 5.0,
     dx: float = 5.0,
     width: float = 0.5,
-    layer: Union[int, LayerEnum] = LAYER.WG,
+    layer: int | LayerEnum = LAYER.WG,
     enclosure: LayerEnclosure = LayerEnclosure(),
 ) -> KCell:
     r"""Symmetric coupler.
+
     Args:
         gap: between straights in um.
         length: of coupling region in um.
@@ -29,6 +26,7 @@ def coupler(
         dx: length of bend in x direction in um.
         layer: layer number or name.
         enclosure: straight enclosure.
+
     .. code::
                dx                                 dx
             |------|                           |------|
@@ -95,7 +93,7 @@ def straight_coupler(
     gap: float = 0.2,
     length: float = 10.0,
     width: float = 0.5,
-    layer: Union[int, LayerEnum] = LAYER.WG,
+    layer: int | LayerEnum = LAYER.WG,
     enclosure: LayerEnclosure = LayerEnclosure(),
 ) -> KCell:
     """Straight coupler.

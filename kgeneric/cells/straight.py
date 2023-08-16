@@ -18,6 +18,7 @@ The slabs and excludes can be given in the form of an :py:class:~`Enclosure`.
 
 from kfactory import KCell, LayerEnum, kcl
 from kfactory.utils import LayerEnclosure
+
 from kgeneric.cells.dbu.straight import straight as straight_dbu
 
 __all__ = ["straight", "straight_dbu"]
@@ -55,7 +56,7 @@ def straight(
 
 
 if __name__ == "__main__":
-    from kgeneric.pdk import LAYER
+    from kgeneric.layers import LAYER
 
     c = straight(width=1, length=10, layer=LAYER.WG)
     c.show()

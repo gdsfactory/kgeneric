@@ -1,10 +1,10 @@
-from typing import Literal, Optional
 from functools import partial
-
-import numpy as np
+from typing import Literal
 
 import kfactory as kf
-from kgeneric.pdk import LAYER
+import numpy as np
+
+from kgeneric.layers import LAYER
 
 nm = 1e-3
 
@@ -20,14 +20,14 @@ def grating_coupler_elliptical(
     grating_line_width: float = 0.343,
     wg_width: float = 500 * nm,
     neff: float = 2.638,  # tooth effective index
-    layer_taper: Optional[LAYER] = LAYER.WG,
+    layer_taper: LAYER | None = LAYER.WG,
     layer_trench: LAYER = LAYER.UNDERCUT,
     p_start: int = 26,
     n_periods: int = 30,
     taper_offset: int = 0,
     taper_extent_n_periods: float | Literal["first"] | Literal["last"] = "last",
-    period: Optional[int] = None,
-    x_fiber_launch: Optional[int] = None,
+    period: int | None = None,
+    x_fiber_launch: int | None = None,
     clad_index: float = 1.443,  # cladding index
 ) -> kf.KCell:
     """Returns elliptical grating coupler.
@@ -162,31 +162,33 @@ def grating_tooth(
     angle_max = taper_angle / 2
 
     backbone_points = ellipse_arc(ap, bp, xp, angle_min, angle_max, angle_step)
-    if spiked:
-        spike_length = width // 3
-        path = kf.kdb.DPath(backbone_points, width).polygon()
-        edges = kf.kdb.Edges([path.to_itype(kf.kcl.dbu)])
-        bb_edges = kf.kdb.Edges(
-            [
-                kf.kdb.DEdge(backbone_points[0], backbone_points[1]).to_itype(
-                    kf.kcl.dbu
-                ),
-                kf.kdb.DEdge(backbone_points[-1], backbone_points[-2]).to_itype(
-                    kf.kcl.dbu
-                ),
-            ]
-        )
-        border_edges = edges.interacting(bb_edges)
-        reg = kf.kdb.Region([path.to_itype(kf.kcl.dbu)])
-        for edge in border_edges.each():
-            shifted = edge.shifted(spike_length)
-            shifted_center = (shifted.p1 + shifted.p2.to_v()) / 2
-            reg.insert(kf.kdb.Polygon([edge.p1, shifted_center, edge.p2]))
-        reg.merge()
+    return (
+        _extracted_from_grating_tooth_15(width, backbone_points)
+        if spiked
+        else kf.kdb.Region(kf.kdb.Path(backbone_points, width))
+    )
 
-    else:
-        reg = kf.kdb.Region(kf.kdb.Path(backbone_points, width))
-    return reg
+
+# TODO Rename this here and in `grating_tooth`
+def _extracted_from_grating_tooth_15(width, backbone_points):
+    spike_length = width // 3
+    path = kf.kdb.DPath(backbone_points, width).polygon()
+    edges = kf.kdb.Edges([path.to_itype(kf.kcl.dbu)])
+    bb_edges = kf.kdb.Edges(
+        [
+            kf.kdb.DEdge(backbone_points[0], backbone_points[1]).to_itype(kf.kcl.dbu),
+            kf.kdb.DEdge(backbone_points[-1], backbone_points[-2]).to_itype(kf.kcl.dbu),
+        ]
+    )
+    border_edges = edges.interacting(bb_edges)
+    result = kf.kdb.Region([path.to_itype(kf.kcl.dbu)])
+    for edge in border_edges.each():
+        shifted = edge.shifted(spike_length)
+        shifted_center = (shifted.p1 + shifted.p2.to_v()) / 2
+        result.insert(kf.kdb.Polygon([edge.p1, shifted_center, edge.p2]))
+    result.merge()
+
+    return result
 
 
 def grating_taper_points(

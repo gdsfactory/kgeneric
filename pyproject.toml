@@ -73,33 +73,6 @@ version_files = [
   "pyproject.toml:version"
 ]
 
-[tool.flake8]
-exclude = [
-  ".git",
-  "__pycache__",
-  "lib",
-  "docs/source/conf.py",
-  "build",
-  "dist",
-  ".ipynb_checkpoints",
-  ".tox",
-  "extra",
-  "deprecated",
-  ".mypy_cache",
-  "venv",
-  "devsim"
-]
-extend-ignore = "RST303"
-ignore = ["E501", "E503", "E722", "W503", "W503", "E203", "B950", "B305", "B018", "B902", "B020", "B905"]
-max-complexity = 57
-max-line-length = 88
-select = ["B", "C", "E", "F", "W", "T4", "B9"]
-
-[tool.isort]
-include_trailing_comma = true
-line_length = 88
-multi_line_output = 3
-
 [tool.mypy]
 exclude = [
   "kgeneric/cells/mzi.py",

@@ -6,7 +6,7 @@ import kfactory as kf
 from kfactory import cell
 from kfactory.kcell import LayerEnum
 from kfactory.routing.optical import route
-from kfactory.typings import CellSpec
+from kfactory.typings import CellFactory
 from kfactory.utils.enclosure import LayerEnclosure
 
 from kgeneric.cells.coupler import coupler
@@ -21,12 +21,12 @@ def mzi(
     length_y: float = 2.0,
     length_x: float | None = 0.1,
     bend: Callable[..., kf.KCell] = bend_euler,
-    straight: CellSpec = straight_function,
-    straight_y: CellSpec | None = None,
-    straight_x_top: CellSpec | None = None,
-    straight_x_bot: CellSpec | None = None,
-    splitter: CellSpec = coupler,
-    combiner: CellSpec | None = None,
+    straight: CellFactory = straight_function,
+    straight_y: CellFactory | None = None,
+    straight_x_top: CellFactory | None = None,
+    straight_x_bot: CellFactory | None = None,
+    splitter: CellFactory = coupler,
+    combiner: CellFactory | None = None,
     with_splitter: bool = True,
     port_e1_splitter: str = "o3",
     port_e0_splitter: str = "o4",
@@ -78,17 +78,6 @@ def mzi(
 
     """
     combiner = combiner or splitter
-
-    straight_x_top = (
-        partial(straight_x_top, layer=layer)
-        if straight_x_top and callable(straight_x_top)
-        else None
-    )
-    straight_x_bot = (
-        partial(straight_x_bot, layer=layer)
-        if straight_x_bot and callable(straight_x_bot)
-        else None
-    )
     straight_x_top = straight_x_top or straight
     straight_x_bot = straight_x_bot or straight
     straight_y = straight_y or straight
@@ -99,7 +88,7 @@ def mzi(
         "radius": radius,
         "enclosure": enclosure,
     }
-    bend = kf.kcl.pdk.get_cell(bend, **bend_settings)
+    bend = bend(**bend_settings)
     c = kf.KCell()
     straight_connect = partial(straight_dbu, layer=layer, enclosure=enclosure)
     combiner_settings = {
@@ -109,85 +98,56 @@ def mzi(
     }
     kwargs.pop("kwargs", "")
     kwargs |= combiner_settings
-    _cp1 = kf.kcl.pdk.get_cell(splitter, **kwargs)
-    kf.kcl.pdk.get_cell(combiner, **kwargs) if combiner else _cp1
+    splitter = splitter(**kwargs)
+    combiner = combiner(**kwargs) if combiner else splitter
 
-    if with_splitter:
-        cp1 = c << _cp1
-    else:
-        cp1 = _cp1
-
-    cp2 = c << _cp1
+    cp1 = c << splitter
+    cp2 = c << combiner
     b5 = c << bend
     # b5.transform(kf.kdb.Trans.M90)
-    b5.connect("W0", cp2.ports[port_e0_splitter])
+    b5.connect("o1", cp2.ports[port_e0_splitter], mirror=True)
     # b5.instance.transform(kf.kdb.Trans(1, False, 0, 0))
     # b5.transform(kf.kdb.Trans.M90.R180)
 
-    syl = c << kf.kcl.pdk.get_cell(
-        straight_y,
+    syl = c << straight_y(
         length=delta_length / 2 + length_y,
         width=width,
         layer=layer,
         enclosure=enclosure,
     )
-    syl.connect("o1", b5.ports["N0"])
+    syl.connect("o1", b5.ports["o2"])
     b6 = c << bend
-    b6.connect("W0", syl.ports["o2"], mirror=True)
+    b6.connect("o1", syl.ports["o2"], mirror=True)
     # b6.transform(kf.kdb.Trans.M90.R270)
 
-    straight_x_bot = (
-        kf.kcl.pdk.get_cell(
-            straight_x_bot,
-            width=width,
-            length=length_x,
-            layer=layer,
-            enclosure=enclosure,
-        )
-        if length_x
-        else kf.kcl.pdk.get_cell(
-            straight_x_bot,
-            length=length_x,
-            width=width,
-            layer=layer,
-            enclosure=enclosure,
-        )
+    straight_x_bot = straight_x_bot(
+        width=width,
+        length=length_x,
+        layer=layer,
+        enclosure=enclosure,
     )
 
     sxb = c << straight_x_bot
-    sxb.connect("o1", b6.ports["N0"], mirror=True)
+    sxb.connect("o1", b6.ports["o2"])
 
     b1 = c << bend
-    b1.connect("W0", cp1.ports[port_e1_splitter])
+    b1.connect("o1", cp1.ports[port_e1_splitter])
 
-    sytl = c << kf.kcl.pdk.get_cell(
-        straight_y, length=length_y, width=width, layer=layer, enclosure=enclosure
+    sytl = c << straight_y(
+        length=length_y, width=width, layer=layer, enclosure=enclosure
     )
-    sytl.connect("o1", b1.ports["N0"])
+    sytl.connect("o1", b1.ports["o2"])
 
     b2 = c << bend
-    b2.connect("N0", sytl.ports["o2"])
-    straight_x_top = (
-        kf.kcl.pdk.get_cell(
-            straight_x_top,
-            length=length_x,
-            width=width,
-            layer=layer,
-            enclosure=enclosure,
-        )
-        if length_x
-        else kf.kcl.pdk.get_cell(
-            straight_x_top,
-            length=length_x,
-            width=width,
-            layer=layer,
-            enclosure=enclosure,
-        )
+    b2.connect("o2", sytl.ports["o2"])
+    straight_x_top = straight_x_top(
+        length=length_x,
+        width=width,
+        layer=layer,
+        enclosure=enclosure,
     )
     sxt = c << straight_x_top
-    sxt.connect("o1", b2.ports["W0"])
-
-    # cp2.transform(port_e0_combiner, cp1.ports[port_e0_splitter])
+    sxt.connect("o1", b2.ports["o1"])
 
     bend_width = abs(bend.ports[0].x - bend.ports[1].x)
     cp2.connect(port_e0_combiner, cp1.ports[port_e0_splitter])
@@ -213,8 +173,8 @@ def mzi(
     if with_splitter:
         c.add_ports([port for port in cp1.ports if port.orientation == 180])
     else:
-        c.add_port(name="o1", port=b1.ports["W0"])
-        c.add_port(name="o2", port=b5.ports["W0"])
+        c.add_port(name="o1", port=b1.ports["o1"])
+        c.add_port(name="o2", port=b5.ports["o1"])
     c.add_ports([port for port in cp2.ports if port.orientation == 0])
     c.autorename_ports()
     return c

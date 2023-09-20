@@ -6,7 +6,7 @@ requires = ["flit_core >=3.2,<4"]
 
 [project]
 authors = [
-  {name = "Skandan Chandrasekar", email = "s39chand@uwaterloo.ca"}
+  {name = "gdsfactory", email = "contact@gdsfactory.com"}
 ]
 classifiers = [
   "Programming Language :: Python :: 3.10",
@@ -17,7 +17,7 @@ dependencies = [
   "kfactory==0.8.4",
   "scipy"
 ]
-description = "KLayout generic PDK"
+description = "Kfactory generic PDK"
 keywords = ["python"]
 license = {file = "LICENSE"}
 name = "kgeneric"
@@ -37,7 +37,7 @@ docs = [
   "autodoc_pydantic",
   "matplotlib",
   "jupytext",
-  "jupyter-book==0.14.0",
+  "jupyter-book>=0.15.1,<0.16",
   "sphinx-autodoc-typehints",
   "sphinx-click"
 ]
@@ -72,33 +72,6 @@ version = "0.1.0"
 version_files = [
   "pyproject.toml:version"
 ]
-
-[tool.flake8]
-exclude = [
-  ".git",
-  "__pycache__",
-  "lib",
-  "docs/source/conf.py",
-  "build",
-  "dist",
-  ".ipynb_checkpoints",
-  ".tox",
-  "extra",
-  "deprecated",
-  ".mypy_cache",
-  "venv",
-  "devsim"
-]
-extend-ignore = "RST303"
-ignore = ["E501", "E503", "E722", "W503", "W503", "E203", "B950", "B305", "B018", "B902", "B020", "B905"]
-max-complexity = 57
-max-line-length = 88
-select = ["B", "C", "E", "F", "W", "T4", "B9"]
-
-[tool.isort]
-include_trailing_comma = true
-line_length = 88
-multi_line_output = 3
 
 [tool.mypy]
 exclude = [

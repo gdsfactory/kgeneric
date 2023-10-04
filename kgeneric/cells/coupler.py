@@ -1,6 +1,6 @@
 from kfactory import KCell, cell, kdb
+from kfactory.enclosure import LayerEnclosure
 from kfactory.kcell import LayerEnum
-from kfactory.utils.enclosure import LayerEnclosure
 
 from kgeneric.cells.bezier import bend_s
 from kgeneric.cells.straight import straight

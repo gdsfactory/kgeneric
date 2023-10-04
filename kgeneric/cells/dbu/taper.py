@@ -4,7 +4,7 @@ TODO: Non-linear tapers
 """
 
 from kfactory import KCell, cell, kdb
-from kfactory.utils import LayerEnclosure
+from kfactory.enclosure import LayerEnclosure
 
 __all__ = ["taper"]
 

@@ -5,7 +5,7 @@ from collections.abc import Sequence
 import numpy as np
 import numpy.typing as nty
 from kfactory import KCell, LayerEnum, cell, kdb
-from kfactory.utils.enclosure import LayerEnclosure, extrude_path
+from kfactory.enclosure import LayerEnclosure, extrude_path
 from scipy.special import binom  # type: ignore[import]
 
 __all__ = ["bend_s"]

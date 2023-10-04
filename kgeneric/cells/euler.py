@@ -7,8 +7,8 @@ end.
 
 import numpy as np
 from kfactory import kdb
+from kfactory.enclosure import LayerEnclosure, extrude_path
 from kfactory.kcell import KCell, LayerEnum, cell
-from kfactory.utils.enclosure import LayerEnclosure, extrude_path
 from scipy.optimize import brentq  # type: ignore[import]
 from scipy.special import fresnel  # type: ignore[import]
 

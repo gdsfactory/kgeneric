@@ -16,8 +16,8 @@ The slabs and excludes can be given in the form of an :py:class:~`Enclosure`.
 """
 
 from kfactory import KCell, LayerEnum, cell, kdb
+from kfactory.enclosure import LayerEnclosure
 from kfactory.kcell import Info
-from kfactory.utils import LayerEnclosure
 
 __all__ = ["straight"]
 

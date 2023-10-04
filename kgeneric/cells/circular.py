@@ -69,7 +69,7 @@ def bend_circular(
 
 
 if __name__ == "__main__":
-    from kgeneric.pdk import LAYER
+    from kgeneric import LAYER
 
     c = bend_circular(width=1, radius=9, angle=9.0, layer=LAYER.WG)
     c.draw_ports()

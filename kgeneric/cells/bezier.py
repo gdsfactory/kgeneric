@@ -91,10 +91,11 @@ def bend_s(
 
 
 if __name__ == "__main__":
-    from kgeneric import pdk
-    from kgeneric.pdk import LAYER
+    import kfactory as kf
 
-    um = 1 / pdk.kcl.dbu
+    from kgeneric import LAYER
+
+    um = 1 / kf.kcl.dbu
     enclosure = LayerEnclosure(
         [
             (LAYER.DEEPTRENCH, 2 * um, 3 * um),

@@ -4,10 +4,10 @@ from typing import Any
 
 import kfactory as kf
 from kfactory import cell
+from kfactory.enclosure import LayerEnclosure
 from kfactory.kcell import LayerEnum
 from kfactory.routing.optical import route
 from kfactory.typings import CellFactory
-from kfactory.utils.enclosure import LayerEnclosure
 
 from kgeneric.cells.coupler import coupler
 from kgeneric.cells.dbu.straight import straight as straight_dbu

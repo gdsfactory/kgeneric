@@ -7,7 +7,7 @@ from kgeneric import cells
 from kgeneric.layers import LAYER
 from kgeneric.tech import TECH
 
-enclosure_sc = kf.utils.LayerEnclosure(name="WGSTD", sections=[(LAYER.WGCLAD, 0, 2000)])
+enclosure_sc = kf.LayerEnclosure(name="WGSTD", sections=[(LAYER.WGCLAD, 0, 2000)])
 
 bend_s_sc = partial(
     cells.bend_s,

@@ -5,7 +5,7 @@ from collections.abc import Sequence
 import numpy as np
 import numpy.typing as nty
 from kfactory import KCell, LayerEnum, cell, kdb
-from kfactory.utils.enclosure import LayerEnclosure, extrude_path
+from kfactory.enclosure import LayerEnclosure, extrude_path
 from scipy.special import binom  # type: ignore[import]
 
 __all__ = ["bend_s"]
@@ -91,10 +91,11 @@ def bend_s(
 
 
 if __name__ == "__main__":
-    from kgeneric import pdk
-    from kgeneric.pdk import LAYER
+    import kfactory as kf
 
-    um = 1 / pdk.kcl.dbu
+    from kgeneric import LAYER
+
+    um = 1 / kf.kcl.dbu
     enclosure = LayerEnclosure(
         [
             (LAYER.DEEPTRENCH, 2 * um, 3 * um),

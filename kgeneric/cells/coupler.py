@@ -1,6 +1,6 @@
 from kfactory import KCell, cell, kdb
+from kfactory.enclosure import LayerEnclosure
 from kfactory.kcell import LayerEnum
-from kfactory.utils.enclosure import LayerEnclosure
 
 from kgeneric.cells.bezier import bend_s
 from kgeneric.cells.straight import straight
@@ -119,9 +119,9 @@ def straight_coupler(
 
 
 if __name__ == "__main__":
-    from kgeneric import pdk
+    import kfactory as kf
 
-    um = 1 / pdk.kcl.dbu
+    um = 1 / kf.kcl.dbu
     enclosure = LayerEnclosure(
         [
             (LAYER.DEEPTRENCH, 2 * um, 3 * um),

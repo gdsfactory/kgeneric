@@ -5,8 +5,8 @@ A circular bend has a constant radius.
 
 import numpy as np
 from kfactory import kdb
+from kfactory.enclosure import LayerEnclosure, extrude_path
 from kfactory.kcell import KCell, LayerEnum, cell
-from kfactory.utils.enclosure import LayerEnclosure, extrude_path
 
 __all__ = ["bend_circular"]
 
@@ -26,7 +26,7 @@ def bend_circular(
         width: Width of the core. [um]
         radius: Radius of the backbone. [um]
         layer: Layer index of the target layer.
-        enclosure: :py:class:`kfactory.utils.Enclosure` object to describe the
+        enclosure: :py:class:`kfactory.enclosure` object to describe the
             claddings.
         angle: Angle amount of the bend.
         angle_step: Angle amount per backbone point of the bend.
@@ -69,7 +69,7 @@ def bend_circular(
 
 
 if __name__ == "__main__":
-    from kgeneric.pdk import LAYER
+    from kgeneric import LAYER
 
     c = bend_circular(width=1, radius=9, angle=9.0, layer=LAYER.WG)
     c.draw_ports()

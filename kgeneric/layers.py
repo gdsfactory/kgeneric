@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from typing import Any
 
+import kfactory as kf
 from kfactory.kcell import LayerEnum
 from pydantic import BaseModel, Field
 
@@ -16,6 +17,8 @@ class LAYER(LayerEnum):
     Cambridge University Press 2015, page 353
     You will need to create a new LayerMap with your specific foundry layers.
     """
+
+    kcl = kf.constant(kf.kcl)
 
     WG = (1, 0)
     WAFER = (50, 0)
@@ -420,6 +423,8 @@ def get_layer_stack(
         )
     )
 
+
+kf.kcl.layers = LAYER
 
 LAYER_STACK = get_layer_stack()
 

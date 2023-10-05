@@ -270,5 +270,5 @@ if __name__ == "__main__":
     from kgeneric import LAYER
 
     c = bend_euler(width=1, radius=10, layer=LAYER.WG)
-    c.draw_ports()
+    # c.draw_ports()
     c.show()

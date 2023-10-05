@@ -9,5 +9,6 @@ if __name__ == "__main__":
     b2.connect("o1", b1.ports["o2"])
     # b1.flatten()
     # b2.flatten()
+    # c.shapes.(10)
     c.flatten()
     c.show()

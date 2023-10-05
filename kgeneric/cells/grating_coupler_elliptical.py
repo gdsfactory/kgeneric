@@ -55,6 +55,7 @@ def grating_coupler_elliptical(
     """
     DEG2RAD = np.pi / 180
     sthc = np.sin(fiber_angle * DEG2RAD)
+    um = 1 / kf.kcl.dbu
 
     if period is not None:
         neff = lambda_c / period + clad_index * sthc
@@ -119,15 +120,16 @@ def grating_coupler_elliptical(
         return taper_pts, x_output
 
     taper_pts, x_output = _get_taper_pts(n_periods_over_grating=n_periods_over_grating)
+
     if layer_taper is not None:
         c.shapes(layer_taper).insert(
             kf.kdb.DPolygon(taper_pts).transformed(kf.kdb.Trans(taper_offset, 0))
         )
         c.create_port(
-            name="W0", trans=kf.kdb.Trans.R180, width=wg_width, layer=layer_taper
+            name="o1", trans=kf.kdb.Trans.R180, width=wg_width * um, layer=layer_taper
         )
 
-    c.transform(kf.kdb.Trans(int(-x_output - taper_offset), 0))
+    # c.transform(kf.kdb.Trans(int(-x_output - taper_offset), 0))
 
     # Add port
     c.info["period"] = _period
